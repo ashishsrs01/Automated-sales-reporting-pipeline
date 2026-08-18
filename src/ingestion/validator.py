@@ -30,18 +30,29 @@ class SchemaValidationResult:
     duplicate_columns: tuple[str, ...]
 
 
-def find_duplicate_columns(columns: pd.Index) -> tuple[str, ...]:
+def find_duplicate_columns(
+    columns: pd.Index,
+) -> tuple[str, ...]:
     """Return duplicate column names."""
     duplicates = columns[columns.duplicated()].unique()
+
     return tuple(sorted(str(column) for column in duplicates))
 
 
-def validate_schema(dataframe: pd.DataFrame) -> SchemaValidationResult:
+def validate_schema(
+    dataframe: pd.DataFrame,
+) -> SchemaValidationResult:
     """Validate the structure of an incoming sales DataFrame."""
     columns = dataframe.columns
 
-    missing_columns = tuple(sorted(REQUIRED_COLUMNS - set(columns)))
-    unexpected_columns = tuple(sorted(set(columns) - REQUIRED_COLUMNS))
+    missing_columns = tuple(
+        sorted(REQUIRED_COLUMNS - set(columns))
+    )
+
+    unexpected_columns = tuple(
+        sorted(set(columns) - REQUIRED_COLUMNS)
+    )
+
     duplicate_columns = find_duplicate_columns(columns)
 
     is_valid = not (
@@ -56,3 +67,5 @@ def validate_schema(dataframe: pd.DataFrame) -> SchemaValidationResult:
         unexpected_columns=unexpected_columns,
         duplicate_columns=duplicate_columns,
     )
+
+
