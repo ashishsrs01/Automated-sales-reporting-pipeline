@@ -1,0 +1,62 @@
+{
+  "sales_january.csv": {
+    "original_rows": 5500,
+    "final_rows": 5582,
+    "duplicate_rows": 82,
+    "missing_values": 333,
+    "text_errors": 219,
+    "date_errors": 55,
+    "invalid_quantities": 27,
+    "invalid_prices": 27
+  },
+  "sales_february.csv": {
+    "original_rows": 5500,
+    "final_rows": 5582,
+    "duplicate_rows": 82,
+    "missing_values": 333,
+    "text_errors": 221,
+    "date_errors": 55,
+    "invalid_quantities": 27,
+    "invalid_prices": 27
+  },
+  "sales_march.csv": {
+    "original_rows": 5500,
+    "final_rows": 5582,
+    "duplicate_rows": 82,
+    "missing_values": 333,
+    "text_errors": 221,
+    "date_errors": 55,
+    "invalid_quantities": 27,
+    "invalid_prices": 27
+  },
+  "sales_april.csv": {
+    "original_rows": 5500,
+    "final_rows": 5582,
+    "duplicate_rows": 82,
+    "missing_values": 333,
+    "text_errors": 219,
+    "date_errors": 55,
+    "invalid_quantities": 27,
+    "invalid_prices": 27
+  },
+  "sales_may.csv": {
+    "original_rows": 5500,
+    "final_rows": 5582,
+    "duplicate_rows": 82,
+    "missing_values": 333,
+    "text_errors": 220,
+    "date_errors": 55,
+    "invalid_quantities": 27,
+    "invalid_prices": 27
+  },
+  "sales_june.csv": {
+    "original_rows": 5500,
+    "final_rows": 5582,
+    "duplicate_rows": 82,
+    "missing_values": 333,
+    "text_errors": 221,
+    "date_errors": 55,
+    "invalid_quantities": 27,
+    "invalid_prices": 27
+  }
+}
