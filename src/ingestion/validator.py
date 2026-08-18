@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-
 REQUIRED_COLUMNS = frozenset(
     {
         "Order_ID",

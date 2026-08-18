@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-
 VALID_REGIONS = frozenset(
     {
         "North",

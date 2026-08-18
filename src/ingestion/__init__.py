@@ -11,8 +11,8 @@ from .validator import (
 )
 
 __all__ = [
-    "IngestionResult",
     "REQUIRED_COLUMNS",
+    "IngestionResult",
     "SchemaValidationResult",
     "discover_csv_files",
     "ingest_csv_directory",
