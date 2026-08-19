@@ -3,8 +3,10 @@ from pathlib import Path
 import matplotlib
 import pandas as pd
 
+from src.analytics.insights import BusinessInsights
 from src.reporting.charts import (
     generate_all_charts,
+    plot_top_products,
 )
 from src.reporting.models import (
     KPISet,
@@ -13,7 +15,6 @@ from src.reporting.models import (
     ReportMetadata,
     ReportTables,
 )
-from src.analytics.insights import BusinessInsights
 
 
 matplotlib.use("Agg")

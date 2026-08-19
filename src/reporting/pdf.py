@@ -5,6 +5,13 @@ from dataclasses import dataclass
 import pandas as pd
 
 from src.analytics.insights import BusinessInsights
+from src.reporting.models import (
+    KPISet,
+    Recommendation,
+    ReportData,
+    ReportMetadata,
+    ReportTables,
+)
 
 
 @dataclass(frozen=True)

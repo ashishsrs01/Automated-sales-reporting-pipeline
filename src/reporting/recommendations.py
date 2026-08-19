@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 
 from src.analytics.insights import BusinessInsights
-from src.reporting.pdf import Recommendation
+from src.reporting.models import Recommendation
 
 
 def generate_recommendations(
@@ -39,6 +39,15 @@ def generate_recommendations(
     if regional_recommendation is not None:
         recommendations.append(
             regional_recommendation
+        )
+
+    category_recommendation = _category_concentration(
+        dataframe
+    )
+
+    if category_recommendation is not None:
+        recommendations.append(
+            category_recommendation
         )
 
     return tuple(recommendations)
@@ -133,13 +142,4 @@ def _category_concentration(
             "Consider monitoring dependence on this category."
         ),
         severity="warning",
-    )
-
-category_recommendation = _category_concentration(
-    dataframe
-)
-
-if category_recommendation is not None:
-    recommendations.append(
-        category_recommendation
     )
