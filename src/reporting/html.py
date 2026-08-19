@@ -19,20 +19,16 @@ def render_html_report(report, charts, output_path):
         )
     )
     insights = "\n".join(
-        
-            _insight_card("Business insight", description)
-            for description in _build_insights(report)
-        
+        _insight_card("Business insight", description)
+        for description in _build_insights(report)
     )
     recommendations = "\n".join(
-        
-            _recommendation_card(
-                recommendation.title,
-                recommendation.description,
-                recommendation.severity,
-            )
-            for recommendation in report.recommendations
-        
+        _recommendation_card(
+            recommendation.title,
+            recommendation.description,
+            recommendation.severity,
+        )
+        for recommendation in report.recommendations
     )
     html = f'<!doctype html>\n<html lang="en">\n<head>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <title>{escape(report.metadata.title)}</title>\n    <style>\n        body {{ font-family: Arial, sans-serif; margin: 40px; }}\n        .header {{ margin-bottom: 30px; }}\n        .kpi-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }}\n        .kpi-card, .insight-card, .recommendation-card {{ padding: 16px; border: 1px solid #ddd; border-radius: 8px; }}\n        .kpi-label {{ font-size: 12px; text-transform: uppercase; }}\n        .kpi-value {{ font-size: 24px; font-weight: bold; }}\n        .section {{ margin-top: 40px; }}\n        .chart {{ width: 100%; max-width: 900px; margin: 12px 0; }}\n        .insights, .recommendations {{ display: grid; gap: 12px; }}\n        .severity {{ font-size: 12px; text-transform: uppercase; }}\n    </style>\n</head>\n<body>\n    <header class="header">\n        <h1>{escape(report.metadata.title)}</h1>\n        <p>{escape(report.metadata.reporting_start)} to {escape(report.metadata.reporting_end)}</p>\n    </header>\n    <section class="section"><h2>Executive Summary</h2><div class="kpi-grid">{kpis}</div></section>\n    <section class="section"><h2>Key Insights</h2><div class="insights">{insights}</div></section>\n    <section class="section"><h2>Recommendations</h2><div class="recommendations">{recommendations}</div></section>\n    <section class="section"><h2>Charts</h2>{chart_markup}</section>\n</body>\n</html>\n'
     output_path.parent.mkdir(parents=True, exist_ok=True)

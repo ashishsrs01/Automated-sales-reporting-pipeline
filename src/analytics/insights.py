@@ -1,5 +1,3 @@
-
-
 class BusinessInsights:
     def __init__(
         self,

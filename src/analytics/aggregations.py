@@ -1,5 +1,3 @@
-
-
 def calculate_overall_metrics(dataframe):
     required_columns = {"Order_ID", "Quantity", "Revenue"}
     missing_columns = required_columns - set(dataframe.columns)

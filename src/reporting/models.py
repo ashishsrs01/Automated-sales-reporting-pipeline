@@ -1,5 +1,3 @@
-
-
 class ReportMetadata:
     def __init__(self, title, reporting_start, reporting_end, generated_at):
         self.title = title

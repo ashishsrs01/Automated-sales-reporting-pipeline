@@ -1,5 +1,3 @@
-
-
 def remove_duplicate_orders(dataframe):
     cleaned = dataframe.copy()
     if "Order_ID" not in cleaned.columns:
