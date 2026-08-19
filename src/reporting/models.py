@@ -1,58 +1,43 @@
-from __future__ import annotations
-
-from dataclasses import dataclass
-
 import pandas as pd
-
 from src.analytics.insights import BusinessInsights
 
-
-@dataclass(frozen=True)
 class ReportMetadata:
-	"""Metadata describing the generated report."""
 
-	title: str
-	reporting_start: str
-	reporting_end: str
-	generated_at: str
+    def __init__(self, title, reporting_start, reporting_end, generated_at):
+        self.title = title
+        self.reporting_start = reporting_start
+        self.reporting_end = reporting_end
+        self.generated_at = generated_at
 
-
-@dataclass(frozen=True)
 class KPISet:
-	"""Executive-level business KPIs."""
 
-	total_revenue: float
-	total_orders: int
-	total_units: int
-	average_order_value: float
+    def __init__(self, total_revenue, total_orders, total_units, average_order_value):
+        self.total_revenue = total_revenue
+        self.total_orders = total_orders
+        self.total_units = total_units
+        self.average_order_value = average_order_value
 
-
-@dataclass(frozen=True)
 class ReportTables:
-	"""Tabular datasets used in the report."""
 
-	by_region: pd.DataFrame
-	by_category: pd.DataFrame
-	by_product: pd.DataFrame
-	by_salesperson: pd.DataFrame
-	monthly_metrics: pd.DataFrame
+    def __init__(self, by_region, by_category, by_product, by_salesperson, monthly_metrics):
+        self.by_region = by_region
+        self.by_category = by_category
+        self.by_product = by_product
+        self.by_salesperson = by_salesperson
+        self.monthly_metrics = monthly_metrics
 
-
-@dataclass(frozen=True)
 class Recommendation:
-	"""A deterministic business recommendation."""
 
-	title: str
-	description: str
-	severity: str
+    def __init__(self, title, description, severity):
+        self.title = title
+        self.description = description
+        self.severity = severity
 
-
-@dataclass(frozen=True)
 class ReportData:
-	"""Complete presentation-ready report data."""
 
-	metadata: ReportMetadata
-	kpis: KPISet
-	tables: ReportTables
-	insights: BusinessInsights
-	recommendations: tuple[Recommendation, ...]
+    def __init__(self, metadata, kpis, tables, insights, recommendations):
+        self.metadata = metadata
+        self.kpis = kpis
+        self.tables = tables
+        self.insights = insights
+        self.recommendations = recommendations

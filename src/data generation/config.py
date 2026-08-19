@@ -1,14 +1,10 @@
-from dataclasses import dataclass
 from pathlib import Path
 
-
-@dataclass(frozen= True)
 class DatasetConfig:
-    seed: int = 42
-    customers: int = 5000
-    transactions_per_month: int = 5500
-
-    output_dir: Path = Path('data/raw')
-    metadata_dir: Path = Path('data/metadata')
-
-    months: tuple[str, ...] = ("january", "february", "march","april","may","june")
+    def __init__(self):
+        self.seed = 42
+        self.customers = 5000
+        self.transactions_per_month = 5500
+        self.output_dir = Path('data/raw')
+        self.metadata_dir = Path('data/metadata')
+        self.months = ("january", "february", "march", "april", "may", "june")

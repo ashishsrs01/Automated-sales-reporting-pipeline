@@ -1,45 +1,19 @@
-from __future__ import annotations
-
 import pandas as pd
 
-
-def normalize_quantity(
-    dataframe: pd.DataFrame,
-) -> pd.DataFrame:
-    """Convert Quantity to numeric values."""
+def normalize_quantity(dataframe):
     cleaned = dataframe.copy()
-
-    if "Quantity" in cleaned.columns:
-        cleaned["Quantity"] = pd.to_numeric(
-            cleaned["Quantity"],
-            errors="coerce",
-        )
-
+    if 'Quantity' in cleaned.columns:
+        cleaned['Quantity'] = pd.to_numeric(cleaned['Quantity'], errors='coerce')
     return cleaned
 
-
-def normalize_unit_price(
-    dataframe: pd.DataFrame,
-) -> pd.DataFrame:
-    """Convert Unit_Price to numeric values."""
+def normalize_unit_price(dataframe):
     cleaned = dataframe.copy()
-
-    if "Unit_Price" in cleaned.columns:
-        cleaned["Unit_Price"] = pd.to_numeric(
-            cleaned["Unit_Price"],
-            errors="coerce",
-        )
-
+    if 'Unit_Price' in cleaned.columns:
+        cleaned['Unit_Price'] = pd.to_numeric(cleaned['Unit_Price'], errors='coerce')
     return cleaned
 
-
-def normalize_numeric_columns(
-    dataframe: pd.DataFrame,
-) -> pd.DataFrame:
-    """Normalize supported numeric fields."""
+def normalize_numeric_columns(dataframe):
     cleaned = dataframe.copy()
-
     cleaned = normalize_quantity(cleaned)
     cleaned = normalize_unit_price(cleaned)
-
     return cleaned
