@@ -69,8 +69,8 @@ def render_html_report(
         <h1>{escape(report.metadata.title)}</h1>
         <p>{escape(report.metadata.reporting_start)} to {escape(report.metadata.reporting_end)}</p>
     </header>
-    <section class="kpi-grid">{kpis}</section>
-    <section class="section"><h2>Insights</h2><div class="insights">{insights}</div></section>
+    <section class="section"><h2>Executive Summary</h2><div class="kpi-grid">{kpis}</div></section>
+    <section class="section"><h2>Key Insights</h2><div class="insights">{insights}</div></section>
     <section class="section"><h2>Recommendations</h2><div class="recommendations">{recommendations}</div></section>
     <section class="section"><h2>Charts</h2>{chart_markup}</section>
 </body>

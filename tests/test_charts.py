@@ -34,7 +34,7 @@ def sample_report() -> ReportData:
 
     return ReportData(
         metadata=ReportMetadata(
-            title="Test Report",
+            title="Business Performance Report",
             reporting_start="2026-01-01",
             reporting_end="2026-02-28",
             generated_at="2026-03-01T00:00:00+00:00",
