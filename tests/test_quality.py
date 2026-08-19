@@ -65,21 +65,13 @@ def test_invalid_region() -> None:
 
 
 def test_invalid_quantity() -> None:
-    dataframe = pd.DataFrame(
-        {
-            "Quantity": [1, 5, 0, -1, "invalid"]
-        }
-    )
+    dataframe = pd.DataFrame({"Quantity": [1, 5, 0, -1, "invalid"]})
 
     assert count_invalid_quantities(dataframe) == 3
 
 
 def test_invalid_price() -> None:
-    dataframe = pd.DataFrame(
-        {
-            "Unit_Price": [100.0, 500.0, 0, -50, "invalid"]
-        }
-    )
+    dataframe = pd.DataFrame({"Unit_Price": [100.0, 500.0, 0, -50, "invalid"]})
 
     assert count_invalid_prices(dataframe) == 3
 

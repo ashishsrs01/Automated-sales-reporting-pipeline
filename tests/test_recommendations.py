@@ -28,10 +28,7 @@ def test_revenue_decline_recommendation() -> None:
 
     assert len(recommendations) == 1
 
-    assert (
-        recommendations[0].title
-        == "Investigate revenue decline"
-    )
+    assert recommendations[0].title == "Investigate revenue decline"
 
     assert recommendations[0].severity == "warning"
 
@@ -57,6 +54,7 @@ def test_small_decline_does_not_trigger_warning() -> None:
     )
 
     assert recommendations == ()
+
 
 def test_regional_concentration() -> None:
     dataframe = pd.DataFrame(
@@ -94,7 +92,6 @@ def test_regional_concentration() -> None:
     )
 
     assert any(
-        recommendation.title
-        == "Monitor regional concentration"
+        recommendation.title == "Monitor regional concentration"
         for recommendation in recommendations
     )

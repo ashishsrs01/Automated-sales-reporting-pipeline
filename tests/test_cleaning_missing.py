@@ -47,9 +47,7 @@ def test_invalid_required_records_are_removed() -> None:
         }
     )
 
-    cleaned, removed = remove_invalid_required_records(
-        dataframe
-    )
+    cleaned, removed = remove_invalid_required_records(dataframe)
 
     assert removed == 2
     assert len(cleaned) == 1
@@ -78,9 +76,7 @@ def test_complete_handling() -> None:
         }
     )
 
-    _, stats = handle_missing_and_invalid_records(
-        dataframe
-    )
+    _, stats = handle_missing_and_invalid_records(dataframe)
 
     assert stats.rows_before == 2
     assert stats.rows_after == 1

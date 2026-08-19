@@ -16,9 +16,7 @@ def test_date_conversion() -> None:
 
     cleaned = normalize_order_date(dataframe)
 
-    assert pd.api.types.is_datetime64_any_dtype(
-        cleaned["Order_Date"]
-    )
+    assert pd.api.types.is_datetime64_any_dtype(cleaned["Order_Date"])
 
     assert cleaned["Order_Date"].notna().all()
 

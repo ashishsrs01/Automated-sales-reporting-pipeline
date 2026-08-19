@@ -18,6 +18,7 @@ from src.reporting.models import (
 
 matplotlib.use("Agg")
 
+
 def sample_report() -> ReportData:
     insights = BusinessInsights(
         top_region="North",
@@ -121,6 +122,7 @@ def sample_report() -> ReportData:
             ),
         ),
     )
+
 
 def test_generate_all_charts(
     tmp_path: Path,

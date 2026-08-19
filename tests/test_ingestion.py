@@ -35,12 +35,8 @@ def test_read_csv_file(tmp_path: Path) -> None:
 
 
 def test_ingest_csv_directory(tmp_path: Path) -> None:
-    (tmp_path / "january.csv").write_text(
-        "Order_ID,Quantity\nORD-1,2\n"
-    )
-    (tmp_path / "february.csv").write_text(
-        "Order_ID,Quantity\nORD-2,3\n"
-    )
+    (tmp_path / "january.csv").write_text("Order_ID,Quantity\nORD-1,2\n")
+    (tmp_path / "february.csv").write_text("Order_ID,Quantity\nORD-2,3\n")
 
     result = ingest_csv_directory(tmp_path)
 

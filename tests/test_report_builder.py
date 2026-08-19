@@ -13,9 +13,7 @@ def test_build_report_data() -> None:
 
     report = build_report_data(analytics_result)
 
-    assert report.metadata.title == (
-        "Business Performance Report"
-    )
+    assert report.metadata.title == ("Business Performance Report")
 
     assert report.kpis.total_revenue > 0
 

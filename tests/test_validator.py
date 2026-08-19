@@ -8,9 +8,7 @@ from src.ingestion.validator import (
 
 def create_valid_dataframe() -> pd.DataFrame:
     """Create a DataFrame with the expected sales schema."""
-    return pd.DataFrame(
-        columns=sorted(REQUIRED_COLUMNS)
-    )
+    return pd.DataFrame(columns=sorted(REQUIRED_COLUMNS))
 
 
 def test_valid_schema() -> None:
@@ -25,9 +23,7 @@ def test_valid_schema() -> None:
 
 
 def test_missing_column() -> None:
-    dataframe = create_valid_dataframe().drop(
-        columns=["Region"]
-    )
+    dataframe = create_valid_dataframe().drop(columns=["Region"])
 
     result = validate_schema(dataframe)
 

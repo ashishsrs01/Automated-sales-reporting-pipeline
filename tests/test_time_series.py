@@ -81,6 +81,7 @@ def test_monthly_metrics_are_chronologically_sorted() -> None:
         "2026-03",
     ]
 
+
 def test_calculate_mom_growth() -> None:
     monthly = pd.DataFrame(
         {
@@ -101,13 +102,9 @@ def test_calculate_mom_growth() -> None:
 
     assert pd.isna(result["MoM_Growth"].iloc[0])
 
-    assert result["MoM_Growth"].iloc[1] == pytest.approx(
-        20.0
-    )
+    assert result["MoM_Growth"].iloc[1] == pytest.approx(20.0)
 
-    assert result["MoM_Growth"].iloc[2] == pytest.approx(
-        25.0
-    )
+    assert result["MoM_Growth"].iloc[2] == pytest.approx(25.0)
 
 
 def test_zero_previous_revenue() -> None:
@@ -129,6 +126,7 @@ def test_zero_previous_revenue() -> None:
 
     assert pd.isna(result["MoM_Growth"].iloc[0])
     assert pd.isna(result["MoM_Growth"].iloc[1])
+
 
 def test_invalid_dates_raise_error() -> None:
     dataframe = pd.DataFrame(

@@ -27,9 +27,7 @@ def test_render_html_report(
     assert output.exists()
     assert output.stat().st_size > 0
 
-    html = output.read_text(
-        encoding="utf-8"
-    )
+    html = output.read_text(encoding="utf-8")
 
     assert "Business Performance Report" in html
     assert "Executive Summary" in html

@@ -58,6 +58,7 @@ def test_missing_unit_price_raises_error() -> None:
     with pytest.raises(ValueError, match="Unit_Price"):
         calculate_revenue(dataframe)
 
+
 def test_classify_order_size() -> None:
     dataframe = pd.DataFrame(
         {

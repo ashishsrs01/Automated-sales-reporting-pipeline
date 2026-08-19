@@ -54,4 +54,3 @@ def test_original_dataframe_is_not_modified() -> None:
     remove_duplicate_orders(dataframe)
 
     assert len(dataframe) == 2
-    

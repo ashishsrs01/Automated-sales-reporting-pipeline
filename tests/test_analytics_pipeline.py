@@ -70,18 +70,11 @@ def sample_dataframe() -> pd.DataFrame:
 
 
 def test_run_analytics_returns_complete_result() -> None:
-    result = run_analytics(
-        sample_dataframe()
-    )
+    result = run_analytics(sample_dataframe())
 
     assert isinstance(result, AnalyticsResult)
 
-    assert result.overall_metrics["total_revenue"] == (
-        2000.0
-        + 500.0
-        + 3000.0
-        + 800.0
-    )
+    assert result.overall_metrics["total_revenue"] == (2000.0 + 500.0 + 3000.0 + 800.0)
 
     assert result.overall_metrics["total_orders"] == 4
 
@@ -103,19 +96,13 @@ def test_run_analytics_returns_complete_result() -> None:
 
 
 def test_monthly_metrics_include_growth() -> None:
-    result = run_analytics(
-        sample_dataframe()
-    )
+    result = run_analytics(sample_dataframe())
 
-    assert "MoM_Growth" in (
-        result.monthly_metrics.columns
-    )
+    assert "MoM_Growth" in (result.monthly_metrics.columns)
 
 
 def test_business_insights_are_generated() -> None:
-    result = run_analytics(
-        sample_dataframe()
-    )
+    result = run_analytics(sample_dataframe())
 
     insights = result.business_insights
 
@@ -126,6 +113,7 @@ def test_business_insights_are_generated() -> None:
     assert insights.top_salesperson == "Alice"
 
     assert insights.best_month == "2026-02"
+
 
 def test_run_analytics_does_not_modify_input() -> None:
     dataframe = sample_dataframe()

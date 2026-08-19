@@ -74,6 +74,7 @@ def monthly_data() -> pd.DataFrame:
         }
     )
 
+
 def test_top_region(
     transaction_data: pd.DataFrame,
 ) -> None:
@@ -114,6 +115,7 @@ def test_largest_decline(
 
     assert month == "2026-03"
     assert rate == pytest.approx(-25.0)
+
 
 def test_generate_business_insights(
     transaction_data: pd.DataFrame,
