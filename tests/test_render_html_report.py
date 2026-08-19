@@ -29,7 +29,28 @@ def test_render_html_report(
 
     html = output.read_text(encoding="utf-8")
 
+    # Core report identity
     assert "Business Performance Report" in html
-    assert "Executive Summary" in html
-    assert "Key Insights" in html
-    assert "Recommendations" in html
+
+    # New executive dashboard sections
+    assert "Performance at a Glance" in html
+    assert "What Matters Most" in html
+    assert "Attention Required" in html
+    assert "Business Performance" in html
+    assert "Recommended Actions" in html
+
+    # KPI content
+    assert "Total Revenue" in html
+    assert "Total Orders" in html
+    assert "Average Order Value" in html
+    assert "Latest MoM Growth" in html
+
+    # Dashboard visualization content
+    assert "Revenue Trend" in html
+    assert "Revenue by Region" in html
+    assert "Revenue by Category" in html
+    assert "Top Products" in html
+    assert "Revenue by Salesperson" in html
+
+    # Report recommendations should still be rendered
+    assert report.recommendations is not None

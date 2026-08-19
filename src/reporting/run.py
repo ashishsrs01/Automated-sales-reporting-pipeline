@@ -7,7 +7,6 @@ from src.reporting.builder import build_report_data
 from src.reporting.charts import generate_all_charts
 from src.reporting.html import render_html_report
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 INPUT_DIR = PROJECT_ROOT / "data" / "raw"
 OUTPUT_DIR = PROJECT_ROOT / "reports"
