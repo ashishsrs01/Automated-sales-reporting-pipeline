@@ -23,16 +23,25 @@ class CleaningResult:
     duplicates_removed: int
 
 
-def clean_dataset(dataframe: pd.DataFrame) -> CleaningResult:
+def clean_dataset(
+    dataframe: pd.DataFrame,
+) -> CleaningResult:
     """Run the complete dataset cleaning pipeline."""
     rows_before = len(dataframe)
 
     cleaned = normalize_text_columns(dataframe)
+
     cleaned = normalize_order_date(cleaned)
+
     cleaned = normalize_numeric_columns(cleaned)
 
-    cleaned, missing_stats = handle_missing_and_invalid_records(cleaned)
-    cleaned, duplicates_removed = remove_duplicate_orders(cleaned)
+    cleaned, missing_stats = handle_missing_and_invalid_records(
+        cleaned
+    )
+
+    cleaned, duplicates_removed = remove_duplicate_orders(
+        cleaned
+    )
 
     rows_removed = rows_before - len(cleaned)
 
