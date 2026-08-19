@@ -16,7 +16,6 @@ from src.reporting.models import (
     ReportTables,
 )
 
-
 matplotlib.use("Agg")
 
 def sample_report() -> ReportData:
