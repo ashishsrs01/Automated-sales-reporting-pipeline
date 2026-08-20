@@ -9,6 +9,7 @@ def render_html_report(report, charts, output_path):
     highlights = _build_highlights(report)
     alerts = _build_alerts(report)
     recommendations = _build_recommendations(report)
+    hero_chart = _build_hero_chart(charts, output_path)
     chart_markup = _build_chart_grid(charts, output_path)
 
     html = f"""<!doctype html>
@@ -16,242 +17,298 @@ def render_html_report(report, charts, output_path):
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>{escape(report.metadata.title)}</title>
 
     <style>
         :root {{
-            --bg: #f5f7fa;
+            --bg: #f3f6fa;
             --surface: #ffffff;
-            --surface-soft: #f8fafc;
-            --border: #e5e7eb;
-            --text: #111827;
-            --muted: #6b7280;
-            --primary: #2563eb;
-            --primary-soft: #eff6ff;
-            --success: #15803d;
-            --success-soft: #f0fdf4;
-            --warning: #b45309;
-            --warning-soft: #fffbeb;
-            --danger: #dc2626;
-            --danger-soft: #fef2f2;
-            --shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
-            --radius: 14px;
+            --surface-soft: #f7f9fc;
+            --border: #e7ebf0;
+            --text: #172033;
+            --muted: #7b8494;
+            --primary: #2f6fed;
+            --primary-soft: #edf3ff;
+            --success: #159570;
+            --success-soft: #eaf8f3;
+            --warning: #c77b16;
+            --warning-soft: #fff7e8;
+            --danger: #e05252;
+            --danger-soft: #fff0f0;
+            --shadow: 0 8px 24px rgba(25, 39, 67, 0.055);
+            --radius: 18px;
         }}
 
-        * {{
-            box-sizing: border-box;
-        }}
+        * {{ box-sizing: border-box; }}
 
         body {{
             margin: 0;
-            background: var(--bg);
+            background:
+                radial-gradient(circle at top left, rgba(47,111,237,.045), transparent 28%),
+                var(--bg);
             color: var(--text);
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Arial,
-                sans-serif;
-            line-height: 1.5;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, Arial, sans-serif;
+            line-height: 1.45;
         }}
 
         .dashboard {{
-            width: min(1400px, calc(100% - 40px));
+            width: min(1480px, calc(100% - 40px));
             margin: 0 auto;
-            padding: 32px 0 60px;
+            padding: 28px 0 54px;
         }}
-
-        /* ---------- Header ---------- */
 
         .header {{
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
             gap: 24px;
-            margin-bottom: 28px;
+            margin-bottom: 22px;
         }}
 
         .eyebrow {{
-            margin: 0 0 6px;
+            margin: 0 0 5px;
             color: var(--primary);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
-            letter-spacing: 0.12em;
+            letter-spacing: .12em;
             text-transform: uppercase;
         }}
 
         h1 {{
             margin: 0;
-            font-size: clamp(28px, 4vw, 42px);
-            line-height: 1.1;
-            letter-spacing: -0.03em;
+            font-size: clamp(26px, 3.2vw, 38px);
+            line-height: 1.08;
+            letter-spacing: -.035em;
         }}
 
         .report-period {{
-            margin: 8px 0 0;
+            margin: 7px 0 0;
             color: var(--muted);
-            font-size: 14px;
+            font-size: 13px;
         }}
 
         .header-badge {{
-            padding: 9px 14px;
+            padding: 9px 13px;
             border: 1px solid var(--border);
             border-radius: 999px;
-            background: var(--surface);
+            background: rgba(255,255,255,.85);
             color: var(--muted);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             white-space: nowrap;
         }}
 
-        /* ---------- Generic ---------- */
-
-        .section {{
-            margin-top: 30px;
-        }}
+        .section {{ margin-top: 20px; }}
 
         .section-heading {{
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
+            align-items: center;
             gap: 16px;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }}
 
         .section-heading h2 {{
             margin: 0;
-            font-size: 20px;
-            letter-spacing: -0.01em;
+            font-size: 15px;
+            letter-spacing: -.01em;
         }}
 
         .section-heading p {{
             margin: 0;
             color: var(--muted);
-            font-size: 13px;
+            font-size: 11px;
         }}
 
-        /* ---------- KPI cards ---------- */
-
+        /* KPI strip — compact, like a modern BI dashboard */
         .kpi-grid {{
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
+            gap: 12px;
         }}
 
         .kpi-card {{
             position: relative;
             overflow: hidden;
-            padding: 22px;
+            min-height: 108px;
+            padding: 16px 18px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
         }}
 
-        .kpi-card::before {{
+        .kpi-card::after {{
             content: "";
             position: absolute;
-            inset: 0 auto 0 0;
-            width: 4px;
-            background: var(--primary);
+            right: -24px;
+            bottom: -30px;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--primary-soft);
         }}
 
         .kpi-label {{
-            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
             color: var(--muted);
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            letter-spacing: 0.08em;
+            letter-spacing: .08em;
             text-transform: uppercase;
         }}
 
         .kpi-value {{
-            font-size: clamp(22px, 3vw, 30px);
+            position: relative;
+            z-index: 1;
+            margin-top: 6px;
+            font-size: clamp(21px, 2.5vw, 29px);
             font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -0.025em;
+            line-height: 1.05;
+            letter-spacing: -.03em;
         }}
 
         .kpi-context {{
-            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+            margin-top: 6px;
             color: var(--muted);
-            font-size: 12px;
+            font-size: 10px;
         }}
 
-        .kpi-danger::before {{
-            background: var(--danger);
-        }}
+        .kpi-danger::after {{ background: var(--danger-soft); }}
+        .kpi-success::after {{ background: var(--success-soft); }}
+        .kpi-warning::after {{ background: var(--warning-soft); }}
 
-        .kpi-success::before {{
-            background: var(--success);
-        }}
-
-        .kpi-warning::before {{
-            background: var(--warning);
-        }}
-
-        /* ---------- Highlights ---------- */
-
-        .highlight-grid {{
+        /* Main visual hierarchy */
+        .hero-grid {{
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
+            grid-template-columns: minmax(0, 1.75fr) minmax(270px, .75fr);
+            gap: 14px;
         }}
 
-        .highlight-card {{
-            min-height: 145px;
-            padding: 20px;
+        .panel {{
             border: 1px solid var(--border);
             border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
+        }}
+
+        .hero-panel {{
+            min-height: 350px;
+            overflow: hidden;
+        }}
+
+        .hero-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px 20px 4px;
+        }}
+
+        .hero-title {{
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+        }}
+
+        .hero-description {{
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+        }}
+
+        .hero-badge {{
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 9px;
+            font-weight: 800;
+            white-space: nowrap;
+        }}
+
+        .hero-chart {{
+            display: block;
+            width: 100%;
+            height: auto;
+            padding: 6px 12px 12px;
+        }}
+
+        .side-panel {{
+            padding: 18px;
+        }}
+
+        .side-panel h3 {{
+            margin: 0;
+            font-size: 14px;
+        }}
+
+        .side-subtitle {{
+            margin: 4px 0 14px;
+            color: var(--muted);
+            font-size: 10px;
+        }}
+
+        .highlight-list {{
+            display: grid;
+            gap: 9px;
+        }}
+
+        .highlight-card {{
+            display: grid;
+            grid-template-columns: 34px 1fr auto;
+            align-items: center;
+            gap: 10px;
+            min-height: 56px;
+            padding: 9px 10px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface-soft);
         }}
 
         .highlight-icon {{
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 38px;
-            height: 38px;
-            margin-bottom: 14px;
+            width: 34px;
+            height: 34px;
             border-radius: 10px;
             background: var(--primary-soft);
-            font-size: 18px;
+            font-size: 15px;
         }}
 
         .highlight-label {{
             color: var(--muted);
-            font-size: 11px;
+            font-size: 8px;
             font-weight: 800;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
+            letter-spacing: .07em;
         }}
 
         .highlight-value {{
-            margin-top: 4px;
-            font-size: 20px;
+            margin-top: 1px;
+            font-size: 12px;
             font-weight: 800;
         }}
 
         .highlight-detail {{
-            margin-top: 3px;
             color: var(--muted);
-            font-size: 12px;
+            font-size: 9px;
+            text-align: right;
         }}
 
-        /* ---------- Alerts ---------- */
-
+        /* Risk callout */
         .alert {{
             display: grid;
             grid-template-columns: auto 1fr auto;
             align-items: center;
-            gap: 18px;
-            padding: 20px 22px;
-            border: 1px solid #fecaca;
-            border-radius: var(--radius);
+            gap: 13px;
+            padding: 13px 16px;
+            border: 1px solid #ffd4d4;
+            border-radius: 14px;
             background: var(--danger-soft);
         }}
 
@@ -259,50 +316,50 @@ def render_html_report(report, charts, output_path):
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
-            background: #fee2e2;
-            font-size: 22px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #ffe0e0;
+            font-size: 17px;
         }}
 
         .alert-title {{
             margin: 0;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 800;
         }}
 
         .alert-description {{
-            margin: 3px 0 0;
-            color: #7f1d1d;
-            font-size: 13px;
+            margin: 2px 0 0;
+            color: #8b3333;
+            font-size: 10px;
         }}
 
         .alert-badge {{
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 999px;
-            background: #fee2e2;
+            background: #ffe0e0;
             color: var(--danger);
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 900;
-            letter-spacing: 0.08em;
+            letter-spacing: .07em;
         }}
 
         .no-alert {{
-            padding: 20px;
-            border: 1px solid #bbf7d0;
-            border-radius: var(--radius);
+            padding: 13px 16px;
+            border: 1px solid #c8eddf;
+            border-radius: 14px;
             background: var(--success-soft);
             color: var(--success);
+            font-size: 11px;
             font-weight: 700;
         }}
 
-        /* ---------- Charts ---------- */
-
+        /* Supporting visuals */
         .chart-grid {{
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
+            gap: 14px;
         }}
 
         .chart-card {{
@@ -313,41 +370,48 @@ def render_html_report(report, charts, output_path):
             box-shadow: var(--shadow);
         }}
 
+        .chart-card:first-child {{
+            grid-column: span 2;
+        }}
+
         .chart-header {{
-            padding: 17px 18px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            padding: 14px 16px 0;
         }}
 
         .chart-title {{
             margin: 0;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 800;
         }}
 
         .chart-description {{
-            margin: 3px 0 0;
+            margin: 2px 0 0;
             color: var(--muted);
-            font-size: 11px;
+            font-size: 9px;
         }}
 
         .chart-image {{
             display: block;
             width: 100%;
             height: auto;
-            padding: 12px;
+            padding: 6px 10px 10px;
         }}
 
-        /* ---------- Recommendations ---------- */
-
+        /* Recommendations are intentionally compact */
         .recommendation-grid {{
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
+            gap: 12px;
         }}
 
         .recommendation-card {{
-            padding: 20px;
+            padding: 15px;
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 14px;
             background: var(--surface);
             box-shadow: var(--shadow);
         }}
@@ -356,57 +420,76 @@ def render_html_report(report, charts, output_path):
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 12px;
+            gap: 10px;
         }}
 
         .recommendation-title {{
             margin: 0;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 800;
         }}
 
         .severity {{
             flex-shrink: 0;
-            padding: 5px 8px;
+            padding: 4px 7px;
             border-radius: 999px;
             background: var(--warning-soft);
             color: var(--warning);
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 900;
-            letter-spacing: 0.08em;
+            letter-spacing: .07em;
             text-transform: uppercase;
         }}
 
         .recommendation-description {{
-            margin: 10px 0 0;
+            margin: 7px 0 0;
             color: var(--muted);
-            font-size: 13px;
+            font-size: 10px;
         }}
 
-        /* ---------- Footer ---------- */
+        .recommendation-actions {{
+            margin-top: 9px;
+            padding: 9px 11px;
+            border-radius: 9px;
+            background: var(--surface-soft);
+        }}
+
+        .recommendation-actions-title {{
+            margin: 0 0 4px;
+            color: var(--text);
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }}
+
+        .recommendation-actions ul {{
+            margin: 0;
+            padding-left: 15px;
+            color: var(--muted);
+            font-size: 9px;
+        }}
+
+        .recommendation-actions li {{ margin: 2px 0; }}
 
         .footer {{
-            margin-top: 40px;
-            padding-top: 18px;
+            margin-top: 30px;
+            padding-top: 14px;
             border-top: 1px solid var(--border);
             color: var(--muted);
-            font-size: 11px;
+            font-size: 9px;
             text-align: center;
         }}
 
-        /* ---------- Responsive ---------- */
-
         @media (max-width: 1050px) {{
-            .kpi-grid,
-            .highlight-grid {{
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }}
+            .hero-grid {{ grid-template-columns: 1fr; }}
+            .kpi-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
         }}
 
         @media (max-width: 760px) {{
             .dashboard {{
-                width: min(100% - 24px, 1400px);
-                padding-top: 20px;
+                width: min(100% - 20px, 1480px);
+                padding-top: 18px;
             }}
 
             .header {{
@@ -415,11 +498,12 @@ def render_html_report(report, charts, output_path):
             }}
 
             .kpi-grid,
-            .highlight-grid,
             .chart-grid,
             .recommendation-grid {{
                 grid-template-columns: 1fr;
             }}
+
+            .chart-card:first-child {{ grid-column: span 1; }}
 
             .alert {{
                 grid-template-columns: auto 1fr;
@@ -438,7 +522,7 @@ def render_html_report(report, charts, output_path):
 
     <header class="header">
         <div>
-            <p class="eyebrow">Executive Dashboard</p>
+            <p class="eyebrow">Sales Intelligence</p>
             <h1>{escape(report.metadata.title)}</h1>
             <p class="report-period">
                 {escape(report.metadata.reporting_start)}
@@ -447,9 +531,7 @@ def render_html_report(report, charts, output_path):
             </p>
         </div>
 
-        <div class="header-badge">
-            Automated Business Intelligence Report
-        </div>
+        <div class="header-badge">Automated Executive Dashboard</div>
     </header>
 
     <section class="section">
@@ -457,39 +539,52 @@ def render_html_report(report, charts, output_path):
             <h2>Performance at a Glance</h2>
             <p>Key business metrics for the reporting period</p>
         </div>
-
         <div class="kpi-grid">
             {kpis}
         </div>
     </section>
 
     <section class="section">
-        <div class="section-heading">
-            <h2>What Matters Most</h2>
-            <p>Fast answers from the underlying analysis</p>
-        </div>
+        <div class="hero-grid">
+            <article class="panel hero-panel">
+                <div class="hero-header">
+                    <div>
+                        <h2 class="hero-title">Revenue & Sales Trend</h2>
+                        <p class="hero-description">
+                            Monthly revenue movement across the reporting period.
+                        </p>
+                    </div>
+                    <span class="hero-badge">TREND</span>
+                </div>
 
-        <div class="highlight-grid">
-            {highlights}
+                {hero_chart}
+            </article>
+
+            <aside class="panel side-panel">
+                <h3>What Matters Most</h3>
+                <p class="side-subtitle">The strongest signals from the analysis</p>
+                <div class="highlight-list">
+                    {highlights}
+                </div>
+            </aside>
         </div>
     </section>
 
     <section class="section">
         <div class="section-heading">
             <h2>Attention Required</h2>
-            <p>Issues that may require business action</p>
+            <p>Business risks detected by the pipeline</p>
         </div>
-
         {alerts}
     </section>
 
     <section class="section">
         <div class="section-heading">
-            <h2>Business Performance</h2>
-            <p>Visual breakdown of the most important drivers</p>
+            <h2>Business Breakdown</h2>
+            <p>Key drivers behind sales performance</p>
         </div>
 
-        <div class="chart-grid">
+        <div class="chart-grid" id="supporting-charts">
             {chart_markup}
         </div>
     </section>
@@ -497,7 +592,7 @@ def render_html_report(report, charts, output_path):
     <section class="section">
         <div class="section-heading">
             <h2>Recommended Actions</h2>
-            <p>Prioritized actions generated from the analysis</p>
+            <p>Prioritized next steps from the analysis</p>
         </div>
 
         <div class="recommendation-grid">
@@ -680,7 +775,71 @@ def _build_alerts(report):
 
 
 def _build_recommendations(report):
-    if not report.recommendations:
+    recommendations = []
+
+    # Preserve recommendations generated by the analytics layer.
+    for recommendation in report.recommendations:
+        title = str(recommendation.title)
+        severity = str(recommendation.severity)
+        description = str(recommendation.description)
+
+        actions = _recommendation_actions(
+            title,
+            description,
+            report,
+        )
+
+        action_markup = _action_list(actions)
+
+        recommendations.append(
+            f"""
+            <article class="recommendation-card">
+                <div class="recommendation-top">
+                    <h3 class="recommendation-title">
+                        {escape(title)}
+                    </h3>
+                    <span class="severity">
+                        {escape(severity)}
+                    </span>
+                </div>
+
+                <p class="recommendation-description">
+                    {escape(description)}
+                </p>
+
+                {action_markup}
+            </article>
+            """
+        )
+
+    # Add a data-quality recommendation when Unknown values exist.
+    unknown_findings = _unknown_data_quality_findings(report)
+
+    if unknown_findings:
+        recommendations.append(
+            f"""
+            <article class="recommendation-card">
+                <div class="recommendation-top">
+                    <h3 class="recommendation-title">
+                        Review Unknown data
+                    </h3>
+                    <span class="severity">
+                        DATA QUALITY
+                    </span>
+                </div>
+
+                <p class="recommendation-description">
+                    Missing dimension values are present in the reporting data
+                    and should be investigated before using the report for
+                    operational decisions.
+                </p>
+
+                {_action_list(unknown_findings)}
+            </article>
+            """
+        )
+
+    if not recommendations:
         return """
             <div class="recommendation-card">
                 <p class="recommendation-description">
@@ -689,25 +848,86 @@ def _build_recommendations(report):
             </div>
         """
 
-    return "\n".join(
-        f"""
-        <article class="recommendation-card">
-            <div class="recommendation-top">
-                <h3 class="recommendation-title">
-                    {escape(str(recommendation.title))}
-                </h3>
-                <span class="severity">
-                    {escape(str(recommendation.severity))}
-                </span>
-            </div>
+    return "\n".join(recommendations)
 
-            <p class="recommendation-description">
-                {escape(str(recommendation.description))}
+
+def _recommendation_actions(title, description, report):
+    text = f"{title} {description}".lower()
+    actions = []
+
+    if "revenue" in text and (
+        "decline" in text or "drop" in text or "decrease" in text
+    ):
+        actions.extend(
+            [
+                "Compare the latest month with the previous month by region.",
+                "Identify categories and products contributing to the decline.",
+                "Verify that the latest month's source data is complete.",
+            ]
+        )
+
+    if not actions:
+        actions.append(
+            "Review the underlying metrics and validate the finding before taking action."
+        )
+
+    return actions
+
+
+def _action_list(actions):
+    items = "\n".join(f"<li>{escape(str(action))}</li>" for action in actions)
+
+    return f"""
+        <div class="recommendation-actions">
+            <p class="recommendation-actions-title">
+                Recommended next steps
             </p>
-        </article>
-        """
-        for recommendation in report.recommendations
+            <ul>
+                {items}
+            </ul>
+        </div>
+    """
+
+
+def _unknown_data_quality_findings(report):
+    findings = []
+
+    dimension_tables = (
+        ("Category", report.tables.by_category),
+        ("Region", report.tables.by_region),
+        ("Salesperson", report.tables.by_salesperson),
     )
+
+    for dimension_name, dataframe in dimension_tables:
+        if dataframe is None or dataframe.empty:
+            continue
+
+        required_columns = {dimension_name, "Revenue"}
+
+        if not required_columns.issubset(dataframe.columns):
+            continue
+
+        unknown_rows = dataframe[
+            dataframe[dimension_name].astype(str).str.strip().str.lower().eq("unknown")
+        ]
+
+        if unknown_rows.empty:
+            continue
+
+        unknown_revenue = unknown_rows["Revenue"].sum()
+
+        findings.append(
+            f"{dimension_name}: "
+            f"{_format_currency(unknown_revenue)} "
+            "is associated with Unknown values."
+        )
+
+    if findings:
+        findings.append(
+            "Trace the affected source records and populate the missing dimension values."
+        )
+
+    return findings
 
 
 def _build_chart_grid(charts, output_path):
@@ -737,6 +957,9 @@ def _build_chart_grid(charts, output_path):
     cards = []
 
     for name, chart_path in charts.items():
+        if name == "monthly_revenue":
+            continue
+
         title, description = chart_information.get(
             name,
             (name.replace("_", " ").title(), "Business performance visualization."),
@@ -748,8 +971,10 @@ def _build_chart_grid(charts, output_path):
             f"""
             <article class="chart-card">
                 <div class="chart-header">
-                    <h3 class="chart-title">{escape(title)}</h3>
-                    <p class="chart-description">{escape(description)}</p>
+                    <div>
+                        <h3 class="chart-title">{escape(title)}</h3>
+                        <p class="chart-description">{escape(description)}</p>
+                    </div>
                 </div>
 
                 <img
@@ -763,6 +988,28 @@ def _build_chart_grid(charts, output_path):
         )
 
     return "\n".join(cards)
+
+
+def _build_hero_chart(charts, output_path):
+    chart_path = charts.get("monthly_revenue")
+
+    if chart_path is None:
+        return """
+            <div style="padding:24px;color:#7b8494;font-size:12px;">
+                Revenue trend chart unavailable.
+            </div>
+        """
+
+    relative_path = _relative_chart_path(chart_path, output_path)
+
+    return f"""
+        <img
+            class="chart-image hero-chart"
+            src="{escape(relative_path)}"
+            alt="Revenue Trend"
+            loading="eager"
+        >
+    """
 
 
 def _kpi_card(label, value, context, css_class=""):
