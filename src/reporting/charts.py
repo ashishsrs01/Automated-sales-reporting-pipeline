@@ -25,7 +25,7 @@ def _format_revenue(value, _position=None):
 
 
 def _add_bar_labels(axis, bars):
-    """Add formatted revenue labels to bar charts."""
+    """Add formatted revenue labels to vertical bars."""
     for bar in bars:
         value = bar.get_height()
         axis.annotate(
@@ -40,7 +40,7 @@ def _add_bar_labels(axis, bars):
 
 
 def _add_horizontal_bar_labels(axis, bars):
-    """Add formatted revenue labels to horizontal bar charts."""
+    """Add formatted revenue labels to horizontal bars."""
     for bar in bars:
         value = bar.get_width()
         axis.annotate(
@@ -52,6 +52,13 @@ def _add_horizontal_bar_labels(axis, bars):
             va="center",
             fontsize=9,
         )
+
+
+def _mark_unknown_bars(axis, bars, labels):
+    """Visually distinguish bars representing missing/unknown data."""
+    for bar, label in zip(bars, labels):
+        if str(label).strip().lower() == "unknown":
+            bar.set_hatch("//")
 
 
 def _style_axis(axis):
@@ -73,13 +80,11 @@ def plot_monthly_revenue(report, output_dir):
     axis.set_title("Monthly Revenue", fontsize=16, pad=12)
     axis.set_xlabel("Month")
     axis.set_ylabel("Revenue")
-
     axis.yaxis.set_major_formatter(FuncFormatter(_format_revenue))
-
     axis.tick_params(axis="x", rotation=45)
+
     _style_axis(axis)
 
-    # Highlight the lowest-revenue month as a potential anomaly.
     minimum_index = revenue.idxmin()
     minimum_revenue = revenue.loc[minimum_index]
     minimum_month = str(dataframe.loc[minimum_index, "Month"])
@@ -87,14 +92,13 @@ def plot_monthly_revenue(report, output_dir):
     axis.annotate(
         f"Lowest revenue\n{_format_revenue(minimum_revenue)}",
         xy=(minimum_month, minimum_revenue),
-        xytext=(0, 35),
+        xytext=(-55, 32),
         textcoords="offset points",
         ha="center",
-        fontsize=9,
+        fontsize=8,
         arrowprops={"arrowstyle": "->"},
     )
 
-    # Annotate the largest month-over-month decline.
     percentage_change = revenue.pct_change()
     largest_decline_index = percentage_change.idxmin()
 
@@ -107,10 +111,10 @@ def plot_monthly_revenue(report, output_dir):
                 str(dataframe.loc[largest_decline_index, "Month"]),
                 revenue.loc[largest_decline_index],
             ),
-            xytext=(0, -35),
+            xytext=(55, 8),
             textcoords="offset points",
             ha="center",
-            fontsize=9,
+            fontsize=8,
             arrowprops={"arrowstyle": "->"},
         )
 
@@ -127,20 +131,18 @@ def plot_revenue_by_region(report, output_dir):
 
     figure, axis = plt.subplots(figsize=(9, 5))
 
-    bars = axis.bar(
-        dataframe["Region"].astype(str),
-        dataframe["Revenue"],
-    )
+    labels = dataframe["Region"].astype(str)
+    bars = axis.bar(labels, dataframe["Revenue"])
 
     axis.set_title("Revenue by Region", fontsize=16, pad=12)
     axis.set_xlabel("Region")
     axis.set_ylabel("Revenue")
-
     axis.yaxis.set_major_formatter(FuncFormatter(_format_revenue))
-
     axis.tick_params(axis="x", rotation=30)
+
     _style_axis(axis)
     _add_bar_labels(axis, bars)
+    _mark_unknown_bars(axis, bars, labels)
 
     figure.tight_layout()
 
@@ -155,20 +157,18 @@ def plot_revenue_by_category(report, output_dir):
 
     figure, axis = plt.subplots(figsize=(9, 5))
 
-    bars = axis.bar(
-        dataframe["Category"].astype(str),
-        dataframe["Revenue"],
-    )
+    labels = dataframe["Category"].astype(str)
+    bars = axis.bar(labels, dataframe["Revenue"])
 
     axis.set_title("Revenue by Category", fontsize=16, pad=12)
     axis.set_xlabel("Category")
     axis.set_ylabel("Revenue")
-
     axis.yaxis.set_major_formatter(FuncFormatter(_format_revenue))
-
     axis.tick_params(axis="x", rotation=30)
+
     _style_axis(axis)
     _add_bar_labels(axis, bars)
+    _mark_unknown_bars(axis, bars, labels)
 
     figure.tight_layout()
 
@@ -199,7 +199,6 @@ def plot_top_products(report, output_dir, top_n=10):
     )
     axis.set_xlabel("Revenue")
     axis.set_ylabel("Product")
-
     axis.xaxis.set_major_formatter(FuncFormatter(_format_revenue))
 
     _style_axis(axis)
@@ -221,10 +220,8 @@ def plot_salesperson_revenue(report, output_dir):
 
     figure, axis = plt.subplots(figsize=(9, 5))
 
-    bars = axis.bar(
-        dataframe["Salesperson"].astype(str),
-        dataframe["Revenue"],
-    )
+    labels = dataframe["Salesperson"].astype(str)
+    bars = axis.bar(labels, dataframe["Revenue"])
 
     axis.set_title(
         "Revenue by Salesperson",
@@ -233,12 +230,32 @@ def plot_salesperson_revenue(report, output_dir):
     )
     axis.set_xlabel("Salesperson")
     axis.set_ylabel("Revenue")
-
     axis.yaxis.set_major_formatter(FuncFormatter(_format_revenue))
-
     axis.tick_params(axis="x", rotation=30)
+
     _style_axis(axis)
     _add_bar_labels(axis, bars)
+    _mark_unknown_bars(axis, bars, labels)
+
+    # Highlight the top named salesperson in the chart narrative.
+    named_dataframe = dataframe[
+        dataframe["Salesperson"].astype(str).str.strip().str.lower() != "unknown"
+    ]
+
+    if not named_dataframe.empty:
+        leader = named_dataframe.iloc[0]
+        leader_name = str(leader["Salesperson"])
+        leader_revenue = leader["Revenue"]
+
+        axis.annotate(
+            f"Top performer: {leader_name}\n{_format_revenue(leader_revenue)}",
+            xy=(leader_name, leader_revenue),
+            xytext=(0, 35),
+            textcoords="offset points",
+            ha="center",
+            fontsize=8,
+            arrowprops={"arrowstyle": "->"},
+        )
 
     figure.tight_layout()
 
