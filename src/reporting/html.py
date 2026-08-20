@@ -21,22 +21,22 @@ def render_html_report(report, charts, output_path):
 
     <style>
         :root {{
-            --bg: #f3f6fa;
+            --bg: #f4f7fe;
             --surface: #ffffff;
-            --surface-soft: #f7f9fc;
-            --border: #e7ebf0;
-            --text: #172033;
-            --muted: #7b8494;
-            --primary: #2f6fed;
-            --primary-soft: #edf3ff;
-            --success: #159570;
-            --success-soft: #eaf8f3;
-            --warning: #c77b16;
-            --warning-soft: #fff7e8;
-            --danger: #e05252;
-            --danger-soft: #fff0f0;
-            --shadow: 0 8px 24px rgba(25, 39, 67, 0.055);
-            --radius: 18px;
+            --surface-soft: #f8f9fa;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --primary: #3b82f6;
+            --primary-soft: #eff6ff;
+            --success: #10b981;
+            --success-soft: #d1fae5;
+            --warning: #f59e0b;
+            --warning-soft: #fef3c7;
+            --danger: #ef4444;
+            --danger-soft: #fee2e2;
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --radius: 20px;
         }}
 
         * {{ box-sizing: border-box; }}
@@ -131,12 +131,14 @@ def render_html_report(report, charts, output_path):
         .kpi-card {{
             position: relative;
             overflow: hidden;
-            min-height: 108px;
-            padding: 16px 18px;
-            border: 1px solid var(--border);
+            min-height: 120px;
+            padding: 20px 24px;
             border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }}
 
         .kpi-card::after {{
@@ -154,33 +156,36 @@ def render_html_report(report, charts, output_path):
             position: relative;
             z-index: 1;
             color: var(--muted);
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .08em;
-            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 600;
         }}
 
         .kpi-value {{
             position: relative;
             z-index: 1;
-            margin-top: 6px;
-            font-size: clamp(21px, 2.5vw, 29px);
+            margin-top: 8px;
+            font-size: clamp(24px, 3vw, 32px);
             font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -.03em;
+            line-height: 1.1;
+            color: var(--text);
         }}
 
         .kpi-context {{
             position: relative;
             z-index: 1;
-            margin-top: 6px;
-            color: var(--muted);
-            font-size: 10px;
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            width: max-content;
         }}
 
-        .kpi-danger::after {{ background: var(--danger-soft); }}
-        .kpi-success::after {{ background: var(--success-soft); }}
-        .kpi-warning::after {{ background: var(--warning-soft); }}
+        .kpi-danger .kpi-context {{ background: var(--danger-soft); color: var(--danger); }}
+        .kpi-success .kpi-context {{ background: var(--success-soft); color: var(--success); }}
+        .kpi-warning .kpi-context {{ background: var(--warning-soft); color: var(--warning); }}
 
         /* Main visual hierarchy */
         .hero-grid {{
@@ -190,7 +195,7 @@ def render_html_report(report, charts, output_path):
         }}
 
         .panel {{
-            border: 1px solid var(--border);
+            border: none;
             border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
@@ -260,13 +265,12 @@ def render_html_report(report, charts, output_path):
 
         .highlight-card {{
             display: grid;
-            grid-template-columns: 34px 1fr auto;
+            grid-template-columns: 42px 1fr auto;
             align-items: center;
-            gap: 10px;
-            min-height: 56px;
-            padding: 9px 10px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            gap: 12px;
+            min-height: 64px;
+            padding: 12px;
+            border-radius: 16px;
             background: var(--surface-soft);
         }}
 
@@ -364,7 +368,7 @@ def render_html_report(report, charts, output_path):
 
         .chart-card {{
             overflow: hidden;
-            border: 1px solid var(--border);
+            border: none;
             border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
@@ -409,9 +413,9 @@ def render_html_report(report, charts, output_path):
         }}
 
         .recommendation-card {{
-            padding: 15px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
+            padding: 20px;
+            border: none;
+            border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
         }}

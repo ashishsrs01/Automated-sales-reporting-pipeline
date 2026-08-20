@@ -2,15 +2,16 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
 # Business dashboard colors
-PRIMARY = "#2f6fed"
-MUTED = "#7b8494"
-DANGER = "#e05252"
-TEXT = "#172033"
+PRIMARY = "#3b82f6"  # Vibrant blue
+PRIMARY_FILL = "#dbeafe"
+MUTED = "#94a3b8"
+DANGER = "#ef4444"
+TEXT = "#0f172a"
 
 
 def _save_figure(figure, output_path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    figure.savefig(output_path, bbox_inches="tight", dpi=150, transparent=True)
+    figure.savefig(output_path, bbox_inches="tight", dpi=180, transparent=True)
     plt.close(figure)
     return output_path
 
@@ -112,16 +113,12 @@ def plot_monthly_revenue(report, output_dir):
     months = dataframe["Month"].astype(str)
     revenue = dataframe["Revenue"]
 
-    axis.plot(months, revenue, marker="o", linewidth=2.5, color=PRIMARY, markersize=5)
+    axis.plot(months, revenue, marker="o", linewidth=3, color=PRIMARY, markersize=6)
+    
+    # Area chart fill
+    axis.fill_between(months, revenue, color=PRIMARY, alpha=0.15)
 
-    axis.set_title(
-        "Monthly Revenue",
-        fontsize=14,
-        fontweight="bold",
-        color=TEXT,
-        pad=16,
-        loc="left",
-    )
+    axis.set_title("Monthly Revenue", fontsize=15, fontweight="bold", color=TEXT, pad=20, loc="left")
     axis.set_xlabel("")
     axis.set_ylabel("")
     axis.yaxis.set_major_formatter(FuncFormatter(_format_revenue))
