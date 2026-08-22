@@ -18,632 +18,511 @@ def render_html_report(report, charts, output_path):
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{escape(report.metadata.title)}</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --bg: #eaf0f8;
-            --surface: rgba(255,255,255,.68);
-            --surface-soft: rgba(255,255,255,.46);
-            --border: rgba(255,255,255,.78);
-            --text: #1e293b;
-            --muted: #64748b;
-            --primary: #3b82f6;
-            --primary-soft: #eff6ff;
+            --bg-color: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --surface-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(148, 163, 184, 0.15);
+            --border-hover: rgba(148, 163, 184, 0.3);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #818cf8;
+            --accent-glow: rgba(129, 140, 248, 0.5);
             --success: #10b981;
-            --success-soft: #d1fae5;
+            --success-bg: rgba(16, 185, 129, 0.15);
             --warning: #f59e0b;
-            --warning-soft: #fef3c7;
+            --warning-bg: rgba(245, 158, 11, 0.15);
             --danger: #ef4444;
-            --danger-soft: #fee2e2;
-            --shadow: 0 22px 50px -28px rgba(30,58,95,.42), 0 3px 12px rgba(30,58,95,.06);
-            --shadow-hover: 0 26px 56px -26px rgba(30,58,95,.48), 0 8px 18px rgba(30,58,95,.08);
-            --radius: 20px;
+            --danger-bg: rgba(239, 68, 68, 0.15);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.1);
         }}
 
-        * {{ box-sizing: border-box; }}
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
 
         body {{
-            margin: 0;
-            background:
-                linear-gradient(135deg, rgba(255,255,255,.6), transparent 42%),
-                linear-gradient(315deg, rgba(191,219,254,.42), transparent 48%),
-                var(--bg);
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 25%);
             background-attachment: fixed;
-            color: var(--text);
-            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                Roboto, Arial, sans-serif;
-            line-height: 1.45;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }}
 
-        .dashboard {{
-            width: min(1480px, calc(100% - 40px));
+        .glass-panel {{
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }}
+
+        .glass-panel:hover {{
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }}
+
+        .dashboard-container {{
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 28px 0 54px;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }}
 
         .header {{
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 24px;
-            margin-bottom: 22px;
+            align-items: flex-end;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
         }}
 
         .eyebrow {{
-            margin: 0 0 5px;
-            color: var(--primary);
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: .12em;
+            font-family: 'Outfit', sans-serif;
+            color: var(--accent);
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
         }}
 
         h1 {{
-            margin: 0;
-            font-size: clamp(26px, 3.2vw, 38px);
-            line-height: 1.08;
-            letter-spacing: -.035em;
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(to right, #f8fafc, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }}
 
         .report-period {{
-            margin: 7px 0 0;
-            color: var(--muted);
-            font-size: 13px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
         }}
 
         .header-badge {{
-            padding: 9px 13px;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            background: rgba(255,255,255,.5);
-            box-shadow: 0 8px 20px rgba(30,58,95,.07);
-            backdrop-filter: blur(14px);
-            color: var(--muted);
-            font-size: 11px;
+            padding: 0.75rem 1.25rem;
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            border-radius: var(--radius-sm);
+            color: var(--accent);
+            font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            white-space: nowrap;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+            box-shadow: 0 0 20px var(--accent-glow);
         }}
 
-        .section {{ margin-top: 20px; }}
-
-        .section-heading {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 10px;
-        }}
-
-        .section-heading h2 {{
-            margin: 0;
-            font-size: 15px;
-            letter-spacing: -.01em;
-        }}
-
-        .section-heading p {{
-            margin: 0;
-            color: var(--muted);
-            font-size: 11px;
-        }}
-
-        /* KPI strip — compact, like a modern BI dashboard */
-        .kpi-grid {{
+        .bento-grid {{
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }}
+
+        .kpi-section {{
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
         }}
 
         .kpi-card {{
-            position: relative;
-            overflow: hidden;
-            min-height: 120px;
-            padding: 20px 24px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }}
 
-        .kpi-card::after {{
-            content: "";
+        .kpi-card::before {{
+            content: '';
             position: absolute;
-            right: -24px;
-            bottom: -30px;
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: rgba(147,197,253,.23);
-            filter: blur(1px);
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--border);
+            transition: background 0.3s ease;
         }}
+        .kpi-card:hover::before {{ background: var(--accent); }}
+        
+        .kpi-card.kpi-success:hover::before {{ background: var(--success); }}
+        .kpi-card.kpi-danger:hover::before {{ background: var(--danger); }}
+        .kpi-card.kpi-warning:hover::before {{ background: var(--warning); }}
 
         .kpi-label {{
-            position: relative;
-            z-index: 1;
-            color: var(--muted);
-            font-size: 13px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }}
 
         .kpi-value {{
-            position: relative;
-            z-index: 1;
-            margin-top: 8px;
-            font-size: clamp(24px, 3vw, 32px);
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
             font-weight: 800;
-            line-height: 1.1;
-            color: var(--text);
+            margin: 1rem 0;
+            color: var(--text-main);
         }}
 
         .kpi-context {{
-            position: relative;
-            z-index: 1;
-            margin-top: 8px;
-            font-size: 11px;
+            font-size: 0.75rem;
             font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 8px;
-            border-radius: 999px;
-            width: max-content;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            width: fit-content;
         }}
 
-        .kpi-danger .kpi-context {{ background: var(--danger-soft); color: var(--danger); }}
-        .kpi-success .kpi-context {{ background: var(--success-soft); color: var(--success); }}
-        .kpi-warning .kpi-context {{ background: var(--warning-soft); color: var(--warning); }}
+        .kpi-success .kpi-context {{ background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }}
+        .kpi-danger .kpi-context {{ background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }}
+        .kpi-warning .kpi-context {{ background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }}
+        .kpi-neutral .kpi-context {{ background: rgba(148,163,184,0.1); color: var(--text-muted); }}
 
-        /* Main visual hierarchy */
-        .hero-grid {{
-            display: grid;
-            grid-template-columns: minmax(0, 1.75fr) minmax(270px, .75fr);
-            gap: 14px;
+        .hero-chart-container {{
+            grid-column: span 8;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
         }}
 
-        .panel {{
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            transition: transform .2s ease, box-shadow .2s ease;
+        .highlights-sidebar {{
+            grid-column: span 4;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(145deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
         }}
 
-        .panel:hover,
-        .chart-card:hover,
-        .recommendation-card:hover,
-        .kpi-card:hover {{
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }}
-
-        .hero-panel {{
-            min-height: 350px;
-            overflow: hidden;
-        }}
-
-        .hero-header {{
+        .section-header {{
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 18px 20px 4px;
-        }}
-
-        .hero-title {{
-            margin: 0;
-            font-size: 16px;
-            font-weight: 800;
-        }}
-
-        .hero-description {{
-            margin: 3px 0 0;
-            color: var(--muted);
-            font-size: 11px;
-        }}
-
-        .hero-badge {{
-            padding: 5px 8px;
-            border-radius: 999px;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-size: 9px;
-            font-weight: 800;
-            white-space: nowrap;
-        }}
-
-        .hero-chart {{
-            display: block;
-            width: 100%;
-            height: auto;
-            padding: 6px 12px 12px;
-        }}
-
-        .side-panel {{
-            padding: 18px;
-        }}
-
-        .side-panel h3 {{
-            margin: 0;
-            font-size: 14px;
-        }}
-
-        .side-subtitle {{
-            margin: 4px 0 14px;
-            color: var(--muted);
-            font-size: 10px;
-        }}
-
-        .highlight-list {{
-            display: grid;
-            gap: 9px;
-        }}
-
-        .highlight-card {{
-            display: grid;
-            grid-template-columns: 42px 1fr auto;
             align-items: center;
-            gap: 12px;
-            min-height: 64px;
-            padding: 12px;
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,.58);
-            background: var(--surface-soft);
-            box-shadow: inset 0 1px rgba(255,255,255,.55);
-            backdrop-filter: blur(12px);
+            margin-bottom: 1.5rem;
         }}
 
-        .highlight-icon {{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            background: var(--primary-soft);
-            font-size: 15px;
-        }}
-
-        .highlight-label {{
-            color: var(--muted);
-            font-size: 8px;
-            font-weight: 800;
-            letter-spacing: .07em;
-        }}
-
-        .highlight-value {{
-            margin-top: 1px;
-            font-size: 12px;
-            font-weight: 800;
-        }}
-
-        .highlight-detail {{
-            color: var(--muted);
-            font-size: 9px;
-            text-align: right;
-        }}
-
-        /* Risk callout */
-        .alert {{
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 13px;
-            padding: 13px 16px;
-            border: 1px solid #ffd4d4;
-            border-radius: 14px;
-            background: rgba(254,226,226,.66);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(12px);
-        }}
-
-        .alert-icon {{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: #ffe0e0;
-            font-size: 17px;
-        }}
-
-        .alert-title {{
-            margin: 0;
-            font-size: 13px;
-            font-weight: 800;
-        }}
-
-        .alert-description {{
-            margin: 2px 0 0;
-            color: #8b3333;
-            font-size: 10px;
-        }}
-
-        .alert-badge {{
-            padding: 5px 8px;
-            border-radius: 999px;
-            background: #ffe0e0;
-            color: var(--danger);
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: .07em;
-        }}
-
-        .no-alert {{
-            padding: 13px 16px;
-            border: 1px solid #c8eddf;
-            border-radius: 14px;
-            background: rgba(209,250,229,.62);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(12px);
-            color: var(--success);
-            font-size: 11px;
+        .section-title {{
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
             font-weight: 700;
+            color: var(--text-main);
         }}
 
-        /* Supporting visuals */
-        .chart-grid {{
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
+        .section-subtitle {{
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }}
 
-        .chart-card {{
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            transition: transform .2s ease, box-shadow .2s ease;
+        .badge-subtle {{
+            background: var(--surface-hover);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }}
 
-        .chart-card:first-child {{
-            grid-column: span 2;
-        }}
-
-        .chart-header {{
+        .chart-image-wrap {{
+            flex: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 12px;
-            padding: 14px 16px 0;
-        }}
-
-        .chart-title {{
-            margin: 0;
-            font-size: 13px;
-            font-weight: 800;
-        }}
-
-        .chart-description {{
-            margin: 2px 0 0;
-            color: var(--muted);
-            font-size: 9px;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }}
 
         .chart-image {{
-            display: block;
-            width: 100%;
+            max-width: 100%;
             height: auto;
-            padding: 6px 10px 10px;
+            border-radius: 4px;
         }}
 
-        /* Recommendations are intentionally compact */
-        .recommendation-grid {{
+        .highlight-item {{
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }}
+        
+        .highlight-item:hover {{
+            background: rgba(255,255,255,0.06);
+            border-color: var(--border);
+            transform: translateX(4px);
+        }}
+
+        .highlight-icon {{
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(129, 140, 248, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: inset 0 0 10px rgba(129, 140, 248, 0.1);
+        }}
+
+        .highlight-content {{
+            flex: 1;
+        }}
+
+        .highlight-label {{
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }}
+
+        .highlight-value {{
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }}
+
+        .highlight-detail {{
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-top: 0.125rem;
+        }}
+
+        .alerts-section {{ grid-column: span 12; }}
+
+        .alert-card {{
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+        }}
+        
+        .alert-card::before {{
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 4px;
+            background: var(--danger);
+        }}
+
+        .alert-icon {{
+            font-size: 2rem;
+            background: rgba(239, 68, 68, 0.2);
+            width: 64px; height: 64px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+        }}
+
+        .alert-content h4 {{ margin-bottom: 0.25rem; color: #fca5a5; font-size: 1.125rem; font-family: 'Outfit', sans-serif; }}
+        .alert-content p {{ color: var(--text-muted); font-size: 0.875rem; }}
+
+        .alert-success {{
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }}
+        .alert-success::before {{ background: var(--success); }}
+        .alert-success .alert-icon {{ background: rgba(16, 185, 129, 0.15); font-size: 1.5rem; color: var(--success); }}
+        .alert-success .alert-content p {{ color: var(--success); font-weight: 500; font-size: 1rem; }}
+
+        .small-chart-card {{
+            grid-column: span 6;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }}
+
+        .recommendations-section {{
+            grid-column: span 12;
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
         }}
 
-        .recommendation-card {{
-            padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            transition: transform .2s ease, box-shadow .2s ease;
+        .rec-card {{
+            padding: 1.5rem;
+            background: linear-gradient(180deg, rgba(30,41,59,0.6), rgba(15,23,42,0.8));
         }}
 
-        .recommendation-top {{
+        .rec-header {{
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 10px;
+            margin-bottom: 1rem;
+        }}
+        
+        .rec-title {{
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-main);
         }}
 
-        .recommendation-title {{
-            margin: 0;
-            font-size: 12px;
+        .rec-badge {{
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.65rem;
             font-weight: 800;
-        }}
-
-        .severity {{
-            flex-shrink: 0;
-            padding: 4px 7px;
-            border-radius: 999px;
-            background: var(--warning-soft);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--warning-bg);
             color: var(--warning);
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: .07em;
+            border: 1px solid rgba(245,158,11,0.3);
+        }}
+
+        .rec-desc {{
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+        }}
+
+        .rec-actions {{
+            background: rgba(0,0,0,0.2);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+        }}
+
+        .rec-actions-title {{
+            font-size: 0.75rem;
             text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
         }}
 
-        .recommendation-description {{
-            margin: 7px 0 0;
-            color: var(--muted);
-            font-size: 10px;
+        .rec-actions ul {{
+            list-style: none;
         }}
 
-        .recommendation-actions {{
-            margin-top: 9px;
-            padding: 9px 11px;
-            border-radius: 9px;
-            border: 1px solid rgba(255,255,255,.55);
-            background: var(--surface-soft);
-            box-shadow: inset 0 1px rgba(255,255,255,.5);
+        .rec-actions li {{
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            position: relative;
         }}
 
-        .recommendation-actions-title {{
-            margin: 0 0 4px;
-            color: var(--text);
-            font-size: 8px;
-            font-weight: 800;
-            letter-spacing: .06em;
-            text-transform: uppercase;
+        .rec-actions li::before {{
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
         }}
 
-        .recommendation-actions ul {{
-            margin: 0;
-            padding-left: 15px;
-            color: var(--muted);
-            font-size: 9px;
-        }}
-
-        .recommendation-actions li {{ margin: 2px 0; }}
-
-        .footer {{
-            margin-top: 30px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-            color: var(--muted);
-            font-size: 9px;
+        footer {{
             text-align: center;
+            padding-top: 3rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
         }}
 
-        @media (max-width: 1050px) {{
-            .hero-grid {{ grid-template-columns: 1fr; }}
-            .kpi-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+        @media (max-width: 1024px) {{
+            .hero-chart-container {{ grid-column: span 12; }}
+            .highlights-sidebar {{ grid-column: span 12; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }}
+            .small-chart-card {{ grid-column: span 12; }}
         }}
-
-        @media (max-width: 760px) {{
-            .dashboard {{
-                width: min(100% - 20px, 1480px);
-                padding-top: 18px;
-            }}
-
-            .header {{
-                align-items: flex-start;
-                flex-direction: column;
-            }}
-
-            .kpi-grid,
-            .chart-grid,
-            .recommendation-grid {{
-                grid-template-columns: 1fr;
-            }}
-
-            .chart-card:first-child {{ grid-column: span 1; }}
-
-            .alert {{
-                grid-template-columns: auto 1fr;
-            }}
-
-            .alert-badge {{
-                grid-column: 2;
-                width: fit-content;
-            }}
+        @media (max-width: 640px) {{
+            .highlights-sidebar {{ grid-template-columns: 1fr; }}
+            .header {{ flex-direction: column; align-items: flex-start; gap: 1rem; }}
         }}
     </style>
 </head>
-
 <body>
-<div class="dashboard">
+    <div class="dashboard-container">
+        
+        <header class="header">
+            <div>
+                <span class="eyebrow">Sales Intelligence</span>
+                <h1>{escape(report.metadata.title)}</h1>
+                <div class="report-period">
+                    {escape(report.metadata.reporting_start)} &nbsp;&bull;&nbsp; {escape(report.metadata.reporting_end)}
+                </div>
+            </div>
+            <div class="header-badge">
+                EXECUTIVE DASHBOARD
+            </div>
+        </header>
 
-    <header class="header">
-        <div>
-            <p class="eyebrow">Sales Intelligence</p>
-            <h1>{escape(report.metadata.title)}</h1>
-            <p class="report-period">
-                {escape(report.metadata.reporting_start)}
-                &nbsp;—&nbsp;
-                {escape(report.metadata.reporting_end)}
-            </p>
-        </div>
+        <main class="bento-grid">
+            <section class="kpi-section" aria-label="Performance at a Glance">
+                {kpis}
+            </section>
 
-        <div class="header-badge">Automated Executive Dashboard</div>
-    </header>
-
-    <section class="section">
-        <div class="section-heading">
-            <h2>Performance at a Glance</h2>
-            <p>Key business metrics for the reporting period</p>
-        </div>
-        <div class="kpi-grid">
-            {kpis}
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="hero-grid">
-            <article class="panel hero-panel">
-                <div class="hero-header">
+            <section class="hero-chart-container glass-panel">
+                <div class="section-header">
                     <div>
-                        <h2 class="hero-title">Revenue & Sales Trend</h2>
-                        <p class="hero-description">
-                            Monthly revenue movement across the reporting period.
-                        </p>
+                        <h2 class="section-title">Revenue & Sales Trend</h2>
+                        <p class="section-subtitle">Monthly revenue movement across the reporting period</p>
                     </div>
-                    <span class="hero-badge">TREND</span>
+                    <span class="badge-subtle">TREND</span>
                 </div>
-
-                {hero_chart}
-            </article>
-
-            <aside class="panel side-panel">
-                <h3>What Matters Most</h3>
-                <p class="side-subtitle">The strongest signals from the analysis</p>
-                <div class="highlight-list">
-                    {highlights}
+                <div class="chart-image-wrap">
+                    {hero_chart}
                 </div>
+            </section>
+
+            <aside class="highlights-sidebar glass-panel">
+                <div class="section-header" style="margin-bottom: 2rem;">
+                    <div>
+                        <h2 class="section-title" style="font-size: 1.125rem;">What Matters Most</h2>
+                        <p class="section-subtitle">Strongest analytical signals</p>
+                    </div>
+                </div>
+                {highlights}
             </aside>
-        </div>
-    </section>
 
-    <section class="section">
-        <div class="section-heading">
-            <h2>Attention Required</h2>
-            <p>Business risks detected by the pipeline</p>
-        </div>
-        {alerts}
-    </section>
+            <section class="alerts-section" aria-label="Attention Required">
+                {alerts}
+            </section>
 
-    <section class="section">
-        <div class="section-heading">
-            <h2>Business Breakdown</h2>
-            <p>Key drivers behind sales performance</p>
-        </div>
-
-        <div class="chart-grid" id="supporting-charts">
             {chart_markup}
-        </div>
-    </section>
 
-    <section class="section">
-        <div class="section-heading">
-            <h2>Recommended Actions</h2>
-            <p>Prioritized next steps from the analysis</p>
-        </div>
+            <section class="recommendations-section">
+                <div style="grid-column: 1 / -1; margin-bottom: -0.5rem;">
+                    <h2 class="section-title" style="font-size: 1.5rem;">Recommended Actions</h2>
+                    <p class="section-subtitle">Prioritized next steps from the analysis</p>
+                </div>
+                {recommendations}
+            </section>
+        </main>
 
-        <div class="recommendation-grid">
-            {recommendations}
-        </div>
-    </section>
-
-    <footer class="footer">
-        Generated automatically from the sales analytics pipeline.
-    </footer>
-
-</div>
+        <footer>
+            GENERATED AUTOMATICALLY BY SALES ANALYTICS PIPELINE &bull; {escape(report.metadata.reporting_end)}
+        </footer>
+    </div>
 </body>
 </html>
 """
@@ -661,7 +540,7 @@ def _build_kpis(report):
     if mom_growth is None:
         growth_value = "N/A"
         growth_context = "Month-over-month change unavailable"
-        growth_class = ""
+        growth_class = "kpi-neutral"
     else:
         growth_value = _format_percentage(mom_growth)
         growth_context = "Latest month vs previous month"
@@ -782,33 +661,34 @@ def _build_alerts(report):
 
         if latest_month is not None:
             description = (
-                f"Revenue fell by {_format_percentage(abs(mom_growth))} "
+                f"Revenue fell by {abs(float(mom_growth)):.1f}% "
                 f"in {latest_month} compared with the previous month."
             )
 
             if previous_revenue is not None and latest_revenue is not None:
                 description += (
                     f" Revenue moved from "
-                    f"{_format_currency(previous_revenue)} to "
-                    f"{_format_currency(latest_revenue)}."
+                    f"{_format_currency_full(previous_revenue)} to "
+                    f"{_format_currency_full(latest_revenue)}."
                 )
 
             return f"""
-                <div class="alert">
+                <div class="alert-card">
                     <div class="alert-icon">⚠️</div>
-                    <div>
-                        <p class="alert-title">Revenue decline detected</p>
-                        <p class="alert-description">
-                            {escape(description)}
-                        </p>
+                    <div class="alert-content">
+                        <h4>Revenue decline detected</h4>
+                        <p>{escape(description)}</p>
                     </div>
-                    <div class="alert-badge">HIGH PRIORITY</div>
+                    <span class="badge-subtle" style="position:absolute; top:1.5rem; right:1.5rem; background: rgba(239, 68, 68, 0.2); color: #f87171;">HIGH PRIORITY</span>
                 </div>
             """
 
     return """
-        <div class="no-alert">
-            ✓ No major negative month-over-month revenue signal detected.
+        <div class="alert-card alert-success">
+            <div class="alert-icon">✓</div>
+            <div class="alert-content">
+                <p>No major negative month-over-month revenue signal detected.</p>
+            </div>
         </div>
     """
 
@@ -832,17 +712,17 @@ def _build_recommendations(report):
 
         recommendations.append(
             f"""
-            <article class="recommendation-card">
-                <div class="recommendation-top">
-                    <h3 class="recommendation-title">
+            <article class="rec-card glass-panel">
+                <div class="rec-header">
+                    <h3 class="rec-title">
                         {escape(title)}
                     </h3>
-                    <span class="severity">
+                    <span class="rec-badge">
                         {escape(severity)}
                     </span>
                 </div>
 
-                <p class="recommendation-description">
+                <p class="rec-desc">
                     {escape(description)}
                 </p>
 
@@ -857,17 +737,17 @@ def _build_recommendations(report):
     if unknown_findings:
         recommendations.append(
             f"""
-            <article class="recommendation-card">
-                <div class="recommendation-top">
-                    <h3 class="recommendation-title">
+            <article class="rec-card glass-panel">
+                <div class="rec-header">
+                    <h3 class="rec-title">
                         Review Unknown data
                     </h3>
-                    <span class="severity">
+                    <span class="rec-badge">
                         DATA QUALITY
                     </span>
                 </div>
 
-                <p class="recommendation-description">
+                <p class="rec-desc">
                     Missing dimension values are present in the reporting data
                     and should be investigated before using the report for
                     operational decisions.
@@ -880,8 +760,8 @@ def _build_recommendations(report):
 
     if not recommendations:
         return """
-            <div class="recommendation-card">
-                <p class="recommendation-description">
+            <div class="rec-card glass-panel">
+                <p class="rec-desc">
                     No specific recommendations were generated for this period.
                 </p>
             </div>
@@ -917,8 +797,8 @@ def _action_list(actions):
     items = "\n".join(f"<li>{escape(str(action))}</li>" for action in actions)
 
     return f"""
-        <div class="recommendation-actions">
-            <p class="recommendation-actions-title">
+        <div class="rec-actions">
+            <p class="rec-actions-title">
                 Recommended next steps
             </p>
             <ul>
@@ -1008,20 +888,21 @@ def _build_chart_grid(charts, output_path):
 
         cards.append(
             f"""
-            <article class="chart-card">
-                <div class="chart-header">
+            <article class="small-chart-card glass-panel">
+                <div class="section-header" style="margin-bottom: 1rem;">
                     <div>
-                        <h3 class="chart-title">{escape(title)}</h3>
-                        <p class="chart-description">{escape(description)}</p>
+                        <h3 class="section-title" style="font-size: 1.125rem;">{escape(title)}</h3>
+                        <p class="section-subtitle" style="font-size: 0.75rem;">{escape(description)}</p>
                     </div>
                 </div>
-
-                <img
-                    class="chart-image"
-                    src="{escape(relative_path)}"
-                    alt="{escape(title)}"
-                    loading="lazy"
-                >
+                <div class="chart-image-wrap">
+                    <img
+                        class="chart-image"
+                        src="{escape(relative_path)}"
+                        alt="{escape(title)}"
+                        loading="lazy"
+                    >
+                </div>
             </article>
             """
         )
@@ -1034,7 +915,7 @@ def _build_hero_chart(charts, output_path):
 
     if chart_path is None:
         return """
-            <div style="padding:24px;color:#7b8494;font-size:12px;">
+            <div style="padding:24px;color:var(--text-muted);font-size:12px;">
                 Revenue trend chart unavailable.
             </div>
         """
@@ -1043,7 +924,7 @@ def _build_hero_chart(charts, output_path):
 
     return f"""
         <img
-            class="chart-image hero-chart"
+            class="chart-image"
             src="{escape(relative_path)}"
             alt="Revenue Trend"
             loading="eager"
@@ -1052,8 +933,10 @@ def _build_hero_chart(charts, output_path):
 
 
 def _kpi_card(label, value, context, css_class=""):
+    if not css_class:
+        css_class = "kpi-neutral"
     return f"""
-        <article class="kpi-card {escape(css_class)}">
+        <article class="kpi-card glass-panel {escape(css_class)}">
             <div class="kpi-label">{escape(label)}</div>
             <div class="kpi-value">{escape(str(value))}</div>
             <div class="kpi-context">{escape(context)}</div>
@@ -1063,21 +946,38 @@ def _kpi_card(label, value, context, css_class=""):
 
 def _highlight_card(icon, label, value, detail):
     return f"""
-        <article class="highlight-card">
+        <article class="highlight-item">
             <div class="highlight-icon">{escape(icon)}</div>
-            <div class="highlight-label">{escape(label)}</div>
-            <div class="highlight-value">{escape(str(value))}</div>
-            <div class="highlight-detail">{escape(str(detail))}</div>
+            <div class="highlight-content">
+                <div class="highlight-label">{escape(label)}</div>
+                <div class="highlight-value">{escape(str(value))}</div>
+                <div class="highlight-detail">{escape(str(detail))}</div>
+            </div>
         </article>
     """
 
 
 def _format_currency(value):
+    v = float(value)
+    if v >= 1_00_00_000:  # >= 1 Cr
+        return f"₹{v / 1_00_00_000:.2f} Cr"
+    if v >= 1_00_000:  # >= 1 L
+        return f"₹{v / 1_00_000:.2f} L"
+    if v >= 1_000:  # >= 1 K
+        return f"₹{v / 1_000:.2f} K"
+    return f"₹{v:,.2f}"
+
+
+def _format_currency_full(value):
+    """Full precision currency — used in alert descriptions."""
     return f"₹{float(value):,.2f}"
 
 
 def _format_integer(value):
-    return f"{int(value):,}"
+    v = int(value)
+    if v >= 1_000:
+        return f"{v:,}"
+    return str(v)
 
 
 def _format_percentage(value):
