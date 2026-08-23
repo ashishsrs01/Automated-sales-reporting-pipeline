@@ -12,7 +12,7 @@
 
 ## Dashboard Preview
 
-![Executive Sales Dashboard](docs\images\dashboard-preview.png)
+![alt text](docs/images/dashboard-preview.png)
 
 ### Key Results
 
