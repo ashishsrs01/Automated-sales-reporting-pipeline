@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, MaxNLocator
 
-PRIMARY = "#2563eb"
-PRIMARY_DARK = "#1d4ed8"
-BAR = "#93c5fd"
-PRIMARY_FILL = "#dbeafe"
-MUTED = "#64748b"
-GRID = "#e2e8f0"
-DANGER = "#dc2626"
-TEXT = "#172033"
-UNKNOWN = "#cbd5e1"
+PRIMARY = "#2dd4bf"
+PRIMARY_DARK = "#14b8a6"
+BAR = "#5b8def"
+PRIMARY_FILL = "#2dd4bf"
+MUTED = "#9aa9bd"
+GRID = "#334155"
+DANGER = "#fb7185"
+TEXT = "#e8eef7"
+UNKNOWN = "#64748b"
 
 
 def _save_figure(figure, output_path):
@@ -145,7 +145,7 @@ def plot_monthly_revenue(report, output_dir):
         linewidth=2.5,
         color=PRIMARY,
         markersize=5,
-        markerfacecolor="white",
+        markerfacecolor="#172235",
         markeredgewidth=2,
         zorder=3,
     )
@@ -171,7 +171,7 @@ def plot_monthly_revenue(report, output_dir):
     axis.axvspan(
         latest_position - 0.35,
         latest_position + 0.35,
-        color="#f8fafc",
+        color="#243249",
         zorder=0,
     )
     axis.plot(
