@@ -12,7 +12,7 @@
 
 ## Dashboard Preview
 
-![alt text](docs/images/dashboard-preview.png)
+![alt text](docs/images/dashboard.jpeg)
 
 ### Key Results
 
