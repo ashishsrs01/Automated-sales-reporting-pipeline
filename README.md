@@ -1,6 +1,8 @@
 # Automated Sales Reporting Pipeline
 
-> A production-style Python pipeline that transforms raw sales data into validated analytics, business insights, actionable recommendations, and an automated executive HTML dashboard.
+> A Python analytics project that transforms sales data into validated metrics, charts, business observations, and an executive HTML dashboard.
+
+The repository reports 69 passing automated tests. The pipeline's outputs are only as reliable as the supplied data, validation rules, and assumptions; recommendations should be reviewed before being used for business decisions.
 
 ![Python](https://img.shields.io/badge/Python-3.13+-3776AB?logo=python&logoColor=white)
 ![Pandas](https://img.shields.io/badge/Pandas-3.0.1-150458?logo=pandas&logoColor=white)
