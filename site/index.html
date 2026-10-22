@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101a1d" />
+    <meta name="description" content="Executive sales performance dashboard generated from the project's sales data." />
+    <title>Sales performance | Executive dashboard</title>
+    <link rel="stylesheet" href="assets/css/dashboard.css" />
+    <script src="assets/js/dashboard.js" defer></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Sales performance dashboard home">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span>SALES <span class="brand-muted">/ INTELLIGENCE</span></span>
+        </a>
+        <span class="live-label"><span class="live-dot"></span> STATIC REPORT</span>
+      </header>
+
+      <nav class="section-nav" aria-label="Dashboard sections">
+        <a href="#overview">Overview</a>
+        <a href="#trend">Revenue trend</a>
+        <a href="#breakdowns">Breakdowns</a>
+        <a href="#insights">Insights & actions</a>
+        <a href="#quality">Data quality</a>
+      </nav>
+
+      <main id="top">
+        <section class="hero" id="overview" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow">EXECUTIVE BRIEFING <span aria-hidden="true">/</span> SALES PERFORMANCE</p>
+            <h1 id="page-title">Business performance</h1>
+            <p class="period" id="report-period">Loading reporting period…</p>
+          </div>
+          <p class="generated" id="generated-at"></p>
+        </section>
+
+        <section class="kpi-grid" aria-label="Executive key performance indicators">
+          <article class="panel kpi-card"><p class="kpi-label">Gross sales revenue</p><p class="kpi-value" id="kpi-revenue">—</p><p class="kpi-note">Quantity × unit price</p></article>
+          <article class="panel kpi-card"><p class="kpi-label">Orders</p><p class="kpi-value" id="kpi-orders">—</p><p class="kpi-note">Distinct order IDs after cleaning</p></article>
+          <article class="panel kpi-card"><p class="kpi-label">Average order value</p><p class="kpi-value" id="kpi-aov">—</p><p class="kpi-note">Revenue per distinct order</p></article>
+          <article class="panel kpi-card"><p class="kpi-label">Latest observed MoM</p><p class="kpi-value" id="kpi-growth">—</p><p class="kpi-note" id="growth-note">Compared with prior observed month</p></article>
+        </section>
+
+        <section class="content-grid" id="trend">
+          <article class="panel chart-panel trend-panel">
+            <div class="panel-heading"><div><p class="eyebrow">01 / MOMENTUM</p><h2>Revenue over time</h2></div><span class="unit-label">MONTHLY · INR</span></div>
+            <p class="panel-copy" id="trend-copy">Revenue by observed calendar month. Months with no source transactions are not assumed to be zero.</p>
+            <div id="trend-chart" class="chart-slot" role="img" aria-label="Monthly revenue trend chart"></div>
+          </article>
+          <aside class="panel signal-panel">
+            <div class="panel-heading"><div><p class="eyebrow">AT A GLANCE</p><h2>Leading signals</h2></div></div>
+            <div id="signal-list" class="signal-list"></div>
+          </aside>
+        </section>
+
+        <section id="breakdowns" class="breakdown-section" aria-labelledby="breakdown-title">
+          <div class="section-heading"><div><p class="eyebrow">02 / CONTRIBUTION</p><h2 id="breakdown-title">Where sales come from</h2></div><p>Rankings reflect recorded revenue for this reporting period.</p></div>
+          <div class="breakdown-grid">
+            <article class="panel chart-panel"><div class="panel-heading"><h3>Regions</h3><span class="unit-label">BY REVENUE</span></div><div id="region-chart" class="chart-slot" role="img" aria-label="Revenue ranked by region"></div></article>
+            <article class="panel chart-panel"><div class="panel-heading"><h3>Categories</h3><span class="unit-label">BY REVENUE</span></div><div id="category-chart" class="chart-slot" role="img" aria-label="Revenue ranked by category"></div></article>
+            <article class="panel chart-panel"><div class="panel-heading"><h3>Top products</h3><span class="unit-label">TOP 8</span></div><div id="product-chart" class="chart-slot" role="img" aria-label="Top products by revenue"></div></article>
+            <article class="panel chart-panel"><div class="panel-heading"><h3>Salespeople</h3><span class="unit-label">BY REVENUE</span></div><div id="sales-chart" class="chart-slot" role="img" aria-label="Revenue ranked by salesperson"></div></article>
+          </div>
+        </section>
+
+        <section class="content-grid lower-grid" id="insights">
+          <article class="panel insight-panel"><div class="panel-heading"><div><p class="eyebrow">03 / WHAT CHANGED</p><h2>Performance signals</h2></div></div><div id="insight-list" class="insight-list"></div></article>
+          <article class="panel insight-panel"><div class="panel-heading"><div><p class="eyebrow">04 / NEXT STEPS</p><h2>Recommended investigation</h2></div></div><div id="recommendation-list" class="recommendation-list"></div><p class="disclaimer">Recommendations are rule-based prompts for investigation. They do not establish why a metric changed.</p></article>
+        </section>
+
+        <section class="panel quality-panel" id="quality">
+          <div class="panel-heading"><div><p class="eyebrow">05 / TRUST & COVERAGE</p><h2>Data preparation</h2></div><span class="unit-label">CLEANING SUMMARY</span></div>
+          <div id="quality-grid" class="quality-grid"></div>
+          <p class="panel-copy quality-copy">Invalid records are excluded before analytics; selected missing dimensions are retained as Unknown. Duplicate detection keeps the first row for each order ID.</p>
+        </section>
+
+        <p id="load-error" class="error-message" role="alert" hidden></p>
+      </main>
+      <footer><span>SALES PERFORMANCE DASHBOARD</span><span id="footer-period"></span></footer>
+    </div>
+  </body>
+</html>

@@ -1,93 +1,79 @@
 # Automated Sales Reporting Pipeline
 
-Turn monthly sales CSV exports into a cleaned, auditable analysis and a portable executive dashboard. The pipeline validates and prepares transaction records, calculates sales KPIs and time trends, generates evidence-based observations, and writes a standalone HTML report with locally generated charts.
+A portfolio-ready sales analytics project with a static executive dashboard designed for GitHub Pages. Visitors open the website directly; they do not need Python, a local server, or `run.py`.
 
-![Executive sales dashboard preview](docs/images/dashboard-preview.png)
+**Dashboard:** [Open the GitHub Pages project site](https://ashishsrs01.github.io/Automated-sales-reporting-pipeline/) *(available after the first successful Pages deployment; deployment has not been run from this workspace).*
 
-## What it does
+![Genuine browser screenshot of the static executive dashboard](docs/images/dashboard-preview.png)
 
-- Reads and combines CSV files from `data/raw/` in deterministic filename order.
-- Normalizes text, dates, and numeric fields; fills selected missing dimensions as `Unknown`; drops invalid required records and duplicate order IDs.
-- Calculates revenue, order count, units, average order value, monthly revenue, and month-over-month revenue change.
-- Breaks performance down by region, category, product, and salesperson.
-- Generates rule-based findings and investigation recommendations. Recommendations are prompts for review, not causal explanations.
-- Produces local PNG charts and a responsive HTML dashboard that works without a network connection.
-- Shows basic cleaning impact in the report: source/retained/excluded rows, duplicate orders removed, and filled dimension values.
+![Full-page screenshot of the static dashboard](docs/images/dashboard-full.png)
 
-## Dashboard
+## What the dashboard shows
 
-The dashboard includes an executive KPI row, monthly revenue trend, performance highlights, regional/category/product/salesperson charts, generated actions, and data preparation metrics. Month-over-month change is omitted when there is no valid previous-month denominator; the report states when comparison is unavailable.
+- Executive sales revenue, distinct order count, average order value, and month-over-month change when a valid complete-period comparison is available.
+- Observed monthly revenue, plus regional, category, product, and salesperson rankings.
+- Data-backed performance findings and rule-based investigation recommendations.
+- Data preparation counts for source rows, retained rows, exclusions, removed duplicate orders, and filled missing dimensions.
+- Responsive layout, semantic sections, and no external libraries, fonts, or CDN requests.
 
-Current screenshot files:
+The current demo dataset is the set of monthly CSV files committed under `data/raw/`. The dashboard is generated from those files; its metrics are not sample placeholders. The source data ends on 2026-07-01, so the latest month may be partial and its month-over-month comparison is suppressed.
 
-- [Overview](docs/images/dashboard-preview.png)
-- [Full dashboard capture](docs/images/dashboard-full.png)
-
-## Technology
-
-- Python 3.13 or newer (per `pyproject.toml`)
-- pandas, NumPy, Matplotlib
-- pytest and Ruff for development
-- No JavaScript or remote assets are required to view the report.
-
-## Architecture and data flow
+## Architecture
 
 ```text
 data/raw/*.csv
-  → src/ingestion (read CSVs)
-  → src/cleaning (normalize, fill permitted dimensions, exclude invalid rows, deduplicate)
-  → src/analytics (revenue, KPI, monthly and dimension aggregations, insights)
-  → src/reporting (recommendations, chart PNGs, HTML)
-  → reports/business-performance-report.html
+  → Python ingestion, cleaning and analytics
+  → report model with KPIs, breakdowns, findings and cleaning totals
+  → site/assets/data/dashboard.json
+  → static site/index.html + assets/css + assets/js
+  → GitHub Pages project site
 ```
 
-Main repository layout:
+`run.py` is an optional build command for maintainers and CI. It refreshes the local Python report and chart outputs as before, and also rebuilds the JSON consumed by the static website. The public website is HTML, CSS, JavaScript and JSON; it does not execute Python in a visitor's browser.
+
+All website references are relative (`assets/...`), so they resolve correctly when GitHub Pages serves the repository beneath `/Automated-sales-reporting-pipeline/`.
+
+## Repository map
 
 ```text
-data/raw/                 Example monthly source CSVs
-data/metadata/            Data generation/quality metadata
-docs/images/              Dashboard screenshots
-reports/                  Generated HTML report and chart PNGs
-src/ingestion/             CSV loading and validation
-src/cleaning/              Text, date, numeric, missing-value and duplicate handling
-src/analytics/             KPI, aggregation, time-series and insight logic
-src/reporting/             Report model, builder, charts, HTML and recommendations
-tests/                     Pipeline and component tests
-run.py                     Project-root command-line entry point
-pyproject.toml             Package, dependency and tool configuration
+data/raw/                    Source sales CSV files
+data/metadata/               Dataset quality metadata
+docs/images/                 Genuine dashboard screenshots
+reports/                     Optional Python HTML report and Matplotlib charts
+site/index.html              GitHub Pages entry point
+site/assets/css/             Responsive dashboard styles
+site/assets/js/              Static dashboard rendering
+site/assets/data/            Generated dashboard JSON
+src/ingestion/               CSV loading and validation
+src/cleaning/                Text/date/numeric normalization and record handling
+src/analytics/               KPIs, aggregations, time series and insights
+src/reporting/               Report models, HTML, charts and static JSON export
+tests/                       Analytics, reporting and static export tests
+.github/workflows/pages.yml  GitHub Actions Pages build and deployment
+run.py                       Optional analytics and dashboard-data build command
+pyproject.toml               Python dependencies and tool configuration
 ```
 
-## Setup
+## Maintainer setup
 
-Use Python 3.13 or newer. From the repository root:
+Python is only needed to regenerate the dashboard data or run development checks. Python 3.13 or newer is declared by this project.
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
-```
-
-On macOS/Linux, activate with `source .venv/bin/activate`.
-
-## Input data
-
-Place one or more CSV files in `data/raw/`. Each file must contain these columns:
-
-`Order_ID`, `Order_Date`, `Customer_ID`, `Product`, `Category`, `Region`, `Salesperson`, `Quantity`, `Unit_Price`.
-
-Dates must be parseable by pandas and quantity/price must be numeric and positive to remain in the cleaned dataset. Missing `Customer_ID`, `Region`, or `Salesperson` values are kept as `Unknown`; missing core fields and invalid non-positive quantities/prices are excluded. Duplicate removal uses `Order_ID` and keeps the first row in sorted file/read order. Back up source files before replacing them; the pipeline reads but does not modify them.
-
-## Generate the report
-
-From the project root, run:
-
-```powershell
 python run.py
 ```
 
-This refreshes `reports/charts/*.png` and `reports/business-performance-report.html` from the current CSV files. Open the HTML report directly in a browser; chart links are relative to the report directory. The module entry point is also available as `python -m src.reporting.run`.
+On macOS/Linux, activate the environment with `source .venv/bin/activate`. To preview `site/` locally, run `python -m http.server 8000 --directory site` and open `http://localhost:8000/`. This local preview is a maintainer convenience; it is not required by website visitors.
 
-## Tests and code quality
+If you provide another dataset, place CSV files in `data/raw/` with these columns:
+
+`Order_ID`, `Order_Date`, `Customer_ID`, `Product`, `Category`, `Region`, `Salesperson`, `Quantity`, `Unit_Price`.
+
+After changing the input data, run `python run.py` to refresh the committed JSON data and optional report outputs.
+
+## Tests and quality checks
 
 ```powershell
 python -m pytest
@@ -95,27 +81,26 @@ python -m ruff check .
 python -m ruff format --check .
 ```
 
-## KPI definitions and assumptions
+GitHub Actions runs these checks, regenerates the JSON from `data/raw/`, then deploys the `site/` directory.
 
-- **Revenue:** `Quantity × Unit_Price` summed across retained rows. The source has no discount, tax, refund, or cost fields, so revenue is not profit or net revenue.
-- **Orders:** distinct `Order_ID` count. Duplicate IDs are removed before analytics.
-- **Units:** sum of retained `Quantity` values.
-- **Average order value:** total revenue divided by distinct orders; zero when there are no orders.
-- **Monthly revenue:** revenue grouped by calendar month. Months with no transactions are not synthesized as zero-sales months.
-- **MoM growth:** `(current month revenue / prior observed month revenue − 1) × 100`. A zero prior value or a missing prior month makes the rate unavailable. Because empty months are not added, this is the prior observed month, which may not be the immediately preceding calendar month.
-- **Rankings and findings:** describe the supplied reporting period only; they do not establish why performance changed.
+## Enable and deploy GitHub Pages
 
-## Data quality and limitations
+There was no Pages workflow or static site configuration in the repository before this change. The new `.github/workflows/pages.yml` deploys on pushes to `main` and on manual workflow dispatch.
 
-Input columns are validated in the schema module; the cleaning pipeline applies normalization and exclusion rules before analytics. The dashboard reports cleaning totals but does not yet expose per-column invalid record counts or a complete before/after validation table. The demo pipeline has no configurable currency, profit/cost measures, customer cohort analysis, or causal attribution. Treat automated insights and recommendations as review prompts and confirm source completeness, especially for partial months.
+For the initial deployment, open **GitHub → repository Settings → Pages**, set the build and deployment source to **GitHub Actions**, then run the **Build and deploy dashboard** workflow (or push a later change to `main`). GitHub Actions needs repository permission to deploy Pages. The expected project URL is `https://ashishsrs01.github.io/Automated-sales-reporting-pipeline/`; it should be considered live only after the workflow completes successfully and GitHub Pages reports the deployed site.
 
-## Potential next steps
+The initial deployment requires Pages to be enabled for this repository as described above. Verify the Actions run and public URL after enabling Pages and triggering the workflow.
 
-- Add configurable currency and date/reporting-period options.
-- Add an explicit validation summary with per-rule record counts and source-file traceability.
-- Support zero-activity calendar months and user-selected comparison windows.
-- Add profit metrics when cost data is available.
-- Add interactive filtering only if it can remain self-contained and accessible offline.
+## Metric definitions and limits
+
+- **Sales revenue:** sum of `Quantity × Unit_Price`. The dataset has no cost, refund, tax or discount fields, so revenue does not mean profit or net revenue.
+- **Orders:** number of distinct `Order_ID` values after duplicate removal.
+- **Average order value:** total sales revenue divided by distinct orders.
+- **Month-over-month change:** current observed month divided by previous observed month, minus one. A zero prior denominator is unavailable. The dashboard also suppresses this comparison when the last transaction date shows that the latest calendar month is partial.
+- **Missing dimensions:** missing customer, region or salesperson values are retained as `Unknown`; invalid required rows are excluded. Duplicate order handling keeps the first row.
+- **Interpretation:** insights describe observed values; recommendations are heuristic investigation prompts and do not establish cause.
+
+The pipeline does not synthesize months with no transactions, quantify profit, support configurable currencies, or prove that a data cutoff reflects full source-system coverage. Review the input reporting period before using the numbers for operational decisions.
 
 ## License
 

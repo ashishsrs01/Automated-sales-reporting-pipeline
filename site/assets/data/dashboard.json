@@ -1,0 +1,292 @@
+{
+  "metadata": {
+    "title": "Business Performance Report",
+    "reporting_start": "2026-01-01",
+    "reporting_end": "2026-07-01",
+    "generated_at": "2026-10-22T16:09:33.430134+00:00",
+    "latest_period_complete": false
+  },
+  "kpis": {
+    "total_revenue": 246249942.54,
+    "total_orders": 32364,
+    "total_units": 129104,
+    "average_order_value": 7608.761047460141
+  },
+  "monthly_metrics": [
+    {
+      "Month": "2026-01",
+      "Revenue": 41022623.63,
+      "Orders": 5394,
+      "Units": 21342,
+      "MoM_Growth": null
+    },
+    {
+      "Month": "2026-02",
+      "Revenue": 36417095.12,
+      "Orders": 4872,
+      "Units": 19597,
+      "MoM_Growth": -11.2268014634
+    },
+    {
+      "Month": "2026-03",
+      "Revenue": 45284494.62,
+      "Orders": 5915,
+      "Units": 23727,
+      "MoM_Growth": 24.3495519639
+    },
+    {
+      "Month": "2026-04",
+      "Revenue": 38388152.29,
+      "Orders": 5225,
+      "Units": 20832,
+      "MoM_Growth": -15.2289263419
+    },
+    {
+      "Month": "2026-05",
+      "Revenue": 43600970.81,
+      "Orders": 5560,
+      "Units": 22176,
+      "MoM_Growth": 13.5792378873
+    },
+    {
+      "Month": "2026-06",
+      "Revenue": 40122187.62,
+      "Orders": 5214,
+      "Units": 20716,
+      "MoM_Growth": -7.9786828719
+    },
+    {
+      "Month": "2026-07",
+      "Revenue": 1414418.45,
+      "Orders": 184,
+      "Units": 714,
+      "MoM_Growth": -96.4747225067
+    }
+  ],
+  "by_region": [
+    {
+      "Region": "Central",
+      "Revenue": 49085585.16,
+      "Orders": 6327,
+      "Units": 25161
+    },
+    {
+      "Region": "North",
+      "Revenue": 48657752.73,
+      "Orders": 6354,
+      "Units": 25262
+    },
+    {
+      "Region": "West",
+      "Revenue": 48640148.9,
+      "Orders": 6458,
+      "Units": 25994
+    },
+    {
+      "Region": "East",
+      "Revenue": 48252908.31,
+      "Orders": 6303,
+      "Units": 25077
+    },
+    {
+      "Region": "South",
+      "Revenue": 46751880.04,
+      "Orders": 6270,
+      "Units": 24969
+    },
+    {
+      "Region": "Unknown",
+      "Revenue": 4861667.4,
+      "Orders": 652,
+      "Units": 2641
+    }
+  ],
+  "by_category": [
+    {
+      "Category": "Furniture",
+      "Revenue": 142456655.34,
+      "Orders": 7418,
+      "Units": 29396
+    },
+    {
+      "Category": "Electronics",
+      "Revenue": 64687989.21,
+      "Orders": 9971,
+      "Units": 39990
+    },
+    {
+      "Category": "Accessories",
+      "Revenue": 28318713.59,
+      "Orders": 7537,
+      "Units": 30069
+    },
+    {
+      "Category": "Unknown",
+      "Revenue": 10786584.4,
+      "Orders": 7438,
+      "Units": 29649
+    }
+  ],
+  "by_product": [
+    {
+      "Product": "Office Chair",
+      "Revenue": 70499817.14,
+      "Orders": 2534,
+      "Units": 10069
+    },
+    {
+      "Product": "Study Table",
+      "Revenue": 52325486.23,
+      "Orders": 2402,
+      "Units": 9512
+    },
+    {
+      "Product": "Headphones",
+      "Revenue": 24376907.47,
+      "Orders": 2485,
+      "Units": 9752
+    },
+    {
+      "Product": "Monitor Stand",
+      "Revenue": 19631351.97,
+      "Orders": 2482,
+      "Units": 9815
+    },
+    {
+      "Product": "Webcam",
+      "Revenue": 19082326.13,
+      "Orders": 2475,
+      "Units": 10028
+    },
+    {
+      "Product": "Laptop Stand",
+      "Revenue": 15503293.17,
+      "Orders": 2549,
+      "Units": 10339
+    },
+    {
+      "Product": "Keyboard",
+      "Revenue": 13246777.81,
+      "Orders": 2519,
+      "Units": 10220
+    },
+    {
+      "Product": "USB Hub",
+      "Revenue": 8870436.15,
+      "Orders": 2491,
+      "Units": 9867
+    },
+    {
+      "Product": "Wireless Mouse",
+      "Revenue": 7981977.8,
+      "Orders": 2492,
+      "Units": 9990
+    },
+    {
+      "Product": "Desk Organizer",
+      "Revenue": 5838716.76,
+      "Orders": 2447,
+      "Units": 9748
+    },
+    {
+      "Product": "Mouse Pad",
+      "Revenue": 3944984.27,
+      "Orders": 2497,
+      "Units": 9863
+    },
+    {
+      "Product": "Pen Set",
+      "Revenue": 2950818.69,
+      "Orders": 2486,
+      "Units": 9865
+    },
+    {
+      "Product": "Notebook",
+      "Revenue": 1997048.95,
+      "Orders": 2505,
+      "Units": 10036
+    }
+  ],
+  "by_salesperson": [
+    {
+      "Salesperson": "Amit",
+      "Revenue": 31224448.78,
+      "Orders": 4008,
+      "Units": 16169
+    },
+    {
+      "Salesperson": "Neha",
+      "Revenue": 31175360.22,
+      "Orders": 4069,
+      "Units": 15993
+    },
+    {
+      "Salesperson": "Sneha",
+      "Revenue": 30943935.56,
+      "Orders": 4042,
+      "Units": 16262
+    },
+    {
+      "Salesperson": "Rahul",
+      "Revenue": 30044807.06,
+      "Orders": 3925,
+      "Units": 15658
+    },
+    {
+      "Salesperson": "Ananya",
+      "Revenue": 29993549.46,
+      "Orders": 3930,
+      "Units": 15594
+    },
+    {
+      "Salesperson": "Vikram",
+      "Revenue": 29947502.41,
+      "Orders": 3987,
+      "Units": 15936
+    },
+    {
+      "Salesperson": "Karan",
+      "Revenue": 29141380.75,
+      "Orders": 3793,
+      "Units": 15178
+    },
+    {
+      "Salesperson": "Priya",
+      "Revenue": 28779741.49,
+      "Orders": 3972,
+      "Units": 15641
+    },
+    {
+      "Salesperson": "Unknown",
+      "Revenue": 4999216.81,
+      "Orders": 638,
+      "Units": 2673
+    }
+  ],
+  "insights": {
+    "top_region": "Central",
+    "top_category": "Furniture",
+    "top_product": "Office Chair",
+    "top_salesperson": "Amit",
+    "best_month": "2026-03",
+    "worst_month": "2026-07",
+    "strongest_growth_month": "2026-03",
+    "strongest_growth_rate": 24.34955196393489,
+    "largest_decline_month": "2026-07",
+    "largest_decline_rate": -96.47472250666874
+  },
+  "recommendations": [
+    {
+      "title": "Investigate revenue decline",
+      "description": "Revenue declined by 96.5% in 2026-07 compared with the previous month.",
+      "severity": "warning"
+    }
+  ],
+  "quality": {
+    "rows_before": 33492,
+    "rows_after": 32364,
+    "rows_removed": 1128,
+    "missing_values_filled": 1998,
+    "duplicates_removed": 477
+  }
+}
