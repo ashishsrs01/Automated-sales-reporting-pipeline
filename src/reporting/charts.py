@@ -131,6 +131,8 @@ def _set_horizontal_bar_limits(axis, values):
 
 def plot_monthly_revenue(report, output_dir):
     dataframe = report.tables.monthly_metrics.copy()
+    if dataframe.empty:
+        raise ValueError("Cannot plot monthly revenue without monthly metrics.")
 
     figure, axis = _prepare_figure((8, 4.2))
 
@@ -195,11 +197,13 @@ def plot_monthly_revenue(report, output_dir):
         color=PRIMARY,
     )
 
-    percentage_change = revenue.pct_change()
-    largest_decline_index = percentage_change.iloc[1:].idxmin()
+    percentage_change = revenue.pct_change().iloc[1:].dropna()
+    largest_decline_index = (
+        percentage_change.idxmin() if not percentage_change.empty else None
+    )
 
     if (
-        largest_decline_index != revenue.index[0]
+        largest_decline_index is not None
         and percentage_change.loc[largest_decline_index] < -0.1
     ):
         decline = percentage_change.loc[largest_decline_index]

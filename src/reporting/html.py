@@ -18,9 +18,6 @@ def render_html_report(report, charts, output_path):
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{escape(report.metadata.title)}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {{
             --bg-color: #0b1220;
@@ -54,7 +51,7 @@ def render_html_report(report, charts, output_path):
                 radial-gradient(circle at 85% 30%, rgba(91, 141, 239, 0.1), transparent 25%);
             background-attachment: fixed;
             color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }}
@@ -66,14 +63,23 @@ def render_html_report(report, charts, output_path):
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }}
 
         .glass-panel:hover {{
             border-color: var(--border-hover);
             box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
         }}
+
+        .section-nav {{ display: flex; gap: .5rem; flex-wrap: wrap; padding: .75rem 0; border-bottom: 1px solid var(--border); }}
+        .section-nav a {{ color: var(--text-muted); text-decoration: none; padding: .45rem .75rem; border-radius: 6px; font-size: .85rem; }}
+        .section-nav a:hover, .section-nav a:focus-visible {{ color: var(--accent); background: var(--surface-hover); outline: 2px solid var(--accent); outline-offset: 2px; }}
+        .quality-section {{ grid-column: span 12; padding: 1.25rem; }}
+        .quality-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; }}
+        .quality-item {{ padding: .9rem; background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: var(--radius-sm); }}
+        .quality-value {{ display: block; color: var(--text-main); font-size: 1.2rem; font-weight: 700; }}
+        .quality-label {{ color: var(--text-muted); font-size: .75rem; }}
+        .quality-note {{ color: var(--text-muted); font-size: .8rem; margin-top: .9rem; }}
 
         .dashboard-container {{
             max-width: 1400px;
@@ -483,12 +489,17 @@ def render_html_report(report, charts, output_path):
             </div>
         </header>
 
+        <nav class="section-nav" aria-label="Dashboard sections">
+            <a href="#overview">Overview</a><a href="#performance">Performance</a>
+            <a href="#breakdowns">Breakdowns</a><a href="#actions">Actions</a><a href="#quality">Data quality</a>
+        </nav>
+
         <main class="bento-grid">
-            <section class="kpi-section" aria-label="Performance at a Glance">
+            <section class="kpi-section" id="overview" aria-label="Performance at a Glance">
                 {kpis}
             </section>
 
-            <section class="hero-chart-container glass-panel">
+            <section class="hero-chart-container glass-panel" id="performance">
                 <div class="section-header">
                     <div>
                         <h2 class="section-title">Revenue & Sales Trend</h2>
@@ -515,15 +526,16 @@ def render_html_report(report, charts, output_path):
                 {alerts}
             </section>
 
-            {chart_markup}
+            <div id="breakdowns" style="display:contents">{chart_markup}</div>
 
-            <section class="recommendations-section">
+            <section class="recommendations-section" id="actions">
                 <div style="grid-column: 1 / -1; margin-bottom: -0.5rem;">
                     <h2 class="section-title" style="font-size: 1.5rem;">Recommended Actions</h2>
                     <p class="section-subtitle">Prioritized next steps from the analysis</p>
                 </div>
                 {recommendations}
             </section>
+            {_build_quality_section(report)}
         </main>
 
         <footer>
@@ -690,12 +702,22 @@ def _build_alerts(report):
                 </div>
             """
 
+    if mom_growth is None:
+        return """
+        <div class="alert-card" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3)">
+            <div class="alert-icon">i</div>
+            <div class="alert-content"><h4>Comparison unavailable</h4>
+            <p>A month-over-month comparison could not be calculated for the latest period.</p></div>
+            <span class="badge-subtle alert-priority">LIMITED DATA</span>
+        </div>
+        """
+
     return """
         <div class="alert-card alert-success">
             <div class="alert-icon">✓</div>
             <div class="alert-content">
-                <h4>Revenue trend is stable</h4>
-                <p>No major negative month-over-month revenue signal detected.</p>
+                <h4>No latest-month decline detected</h4>
+                <p>The latest valid month-over-month comparison is flat or positive.</p>
             </div>
             <span class="badge-subtle alert-priority alert-priority-success">HEALTHY</span>
         </div>
@@ -856,6 +878,30 @@ def _unknown_data_quality_findings(report):
         )
 
     return findings
+
+
+def _build_quality_section(report):
+    quality = getattr(report, "quality", None)
+    if quality is None:
+        return ""
+    items = (
+        ("Source rows", quality.rows_before),
+        ("Rows retained", quality.rows_after),
+        ("Rows excluded", quality.rows_removed),
+        ("Duplicate orders removed", quality.duplicates_removed),
+        ("Missing dimensions filled", quality.missing_values_filled),
+    )
+    cards = "".join(
+        f'<div class="quality-item"><span class="quality-value">{int(value):,}</span>'
+        f'<span class="quality-label">{escape(label)}</span></div>'
+        for label, value in items
+    )
+    return f"""<section class="quality-section glass-panel" id="quality" aria-labelledby="quality-title">
+        <div class="section-header"><div><h2 class="section-title" id="quality-title">Data quality & preparation</h2>
+        <p class="section-subtitle">Cleaning actions applied before metrics were calculated</p></div></div>
+        <div class="quality-grid">{cards}</div>
+        <p class="quality-note">Excluded rows had missing required fields or invalid non-positive quantity/price values. Duplicate detection keeps the first row for each Order_ID. Filled values are labeled Unknown and remain visible in breakdowns.</p>
+    </section>"""
 
 
 def _build_chart_grid(charts, output_path):

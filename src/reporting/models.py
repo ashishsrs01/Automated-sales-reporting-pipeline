@@ -33,9 +33,26 @@ class Recommendation:
 
 
 class ReportData:
-    def __init__(self, metadata, kpis, tables, insights, recommendations):
+    def __init__(self, metadata, kpis, tables, insights, recommendations, quality=None):
         self.metadata = metadata
         self.kpis = kpis
         self.tables = tables
         self.insights = insights
         self.recommendations = recommendations
+        self.quality = quality
+
+
+class DataQualitySummary:
+    def __init__(
+        self,
+        rows_before,
+        rows_after,
+        rows_removed,
+        missing_values_filled,
+        duplicates_removed,
+    ):
+        self.rows_before = rows_before
+        self.rows_after = rows_after
+        self.rows_removed = rows_removed
+        self.missing_values_filled = missing_values_filled
+        self.duplicates_removed = duplicates_removed

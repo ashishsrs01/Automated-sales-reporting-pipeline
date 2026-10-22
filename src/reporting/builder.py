@@ -1,10 +1,16 @@
 from datetime import datetime, timezone
 
-from src.reporting.models import KPISet, ReportData, ReportMetadata, ReportTables
+from src.reporting.models import (
+    DataQualitySummary,
+    KPISet,
+    ReportData,
+    ReportMetadata,
+    ReportTables,
+)
 from src.reporting.recommendations import generate_recommendations
 
 
-def build_report_data(analytics_result):
+def build_report_data(analytics_result, cleaning_result=None):
     enriched_data = analytics_result.enriched_data
     if enriched_data.empty:
         raise ValueError("Cannot build a report from an empty dataset.")
@@ -35,10 +41,20 @@ def build_report_data(analytics_result):
         monthly_metrics=analytics_result.monthly_metrics,
         insights=analytics_result.business_insights,
     )
+    quality = None
+    if cleaning_result is not None:
+        quality = DataQualitySummary(
+            rows_before=cleaning_result.rows_before,
+            rows_after=cleaning_result.rows_after,
+            rows_removed=cleaning_result.rows_removed,
+            missing_values_filled=cleaning_result.missing_values_filled,
+            duplicates_removed=cleaning_result.duplicates_removed,
+        )
     return ReportData(
         metadata=metadata,
         kpis=kpis,
         tables=tables,
         insights=analytics_result.business_insights,
         recommendations=recommendations,
+        quality=quality,
     )

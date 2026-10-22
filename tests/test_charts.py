@@ -160,3 +160,10 @@ def test_top_products_respects_limit(
     )
 
     assert path.exists()
+
+
+def test_monthly_revenue_chart_supports_single_month(tmp_path: Path) -> None:
+    report = sample_report()
+    report.tables.monthly_metrics = report.tables.monthly_metrics.iloc[:1].copy()
+    charts = generate_all_charts(report, tmp_path)
+    assert charts["monthly_revenue"].exists()

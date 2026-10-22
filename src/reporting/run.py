@@ -19,7 +19,7 @@ def generate_report() -> Path:
     ingested = ingest_csv_directory(INPUT_DIR)
     cleaned = clean_dataset(ingested.dataframe)
     analytics_result = run_analytics(cleaned.dataframe)
-    report = build_report_data(analytics_result)
+    report = build_report_data(analytics_result, cleaned)
     charts = generate_all_charts(report, CHARTS_DIR)
 
     return render_html_report(

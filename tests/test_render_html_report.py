@@ -38,6 +38,8 @@ def test_render_html_report(
     assert "Attention Required" in html
     assert "Business Performance" in html
     assert "Recommended Actions" in html
+    assert 'aria-label="Dashboard sections"' in html
+    assert "fonts.googleapis.com" not in html
 
     # KPI content
     assert "Total Revenue" in html
